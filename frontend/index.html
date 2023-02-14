@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="./icons/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111111" />
+    <meta
+      name="description"
+      content="Cryptocademy is an app that teaches people how to trade cryptocurrencies and invest in coins like bitcoin,ethereum etc. User can analyze market data by viewing charts, top daily cryptocurrency news. Through our curated blogs and courses,users can also learn more about cryptocurrency and blockchain concepts."
+    />
+    <link rel="apple-touch-icon" href="./logo192.png" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="canonical" href="https://cryptocademy.pages.dev/" />
+    <meta property="og:title" content="Learn to invest like a pro" />
+    <meta
+      property="og:description"
+      content="Cryptocademy is an app that teaches people how to trade cryptocurrencies and invest in coins like bitcoin,ethereum etc. User can analyze market data by viewing charts, top daily cryptocurrency news. Through our curated blogs and courses,users can also learn more about cryptocurrency and blockchain concepts."
+    />
+    <meta property="og:image" content="./cryptocademy-logo-sideways-light.png" />
+    <meta property="og:image:width" content="2727" />
+    <meta property="og:image:height" content="1952" />
+    <meta property="og:site_name" content="Cryptocademy" />
+    <meta property="og:type" content="Trading,Investment,Courses,Learning" />
+    <meta name="language" content="EN" />
+    <meta name="author" content="Cryptocademy" />
+    <!-- analytics - privacy focused, GDPR compliant -->
+    <title>Cryptocademy - Learn to invest like a pro.</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./serviceWorker.js")
+            .then((reg) => console.log("Success: ", reg.scope))
+            .catch((err) => console.log("failure:", err));
+        });
+      }
+
+      window.addEventListener("offline", () => {
+        window.location.reload();
+      });
+    </script>
+    <script type="module" src="./src/index.jsx"></script>
+  </body>
+</html>

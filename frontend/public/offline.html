@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You are offline!</title>
+    <style type="text/css">
+        /* reset */
+        * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        }
+
+        body {
+
+            height: 100vh;
+            width: 100vw;
+            background: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow-x: hidden;
+        }
+        body img {
+            object-fit: fill;
+        }
+        body h1 {
+            font-size: xx-large;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        body button {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            background-color: #4ade80;
+            color: white;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- <img src="./cryptocademy-logo-sideways-light.png" alt="Device is offline"> -->
+    <h1>Seems like you are offline!</h1>
+    <p>Please check your internet connection & try again.</p>
+    <button>Retry</button>
+</body>
+<script>
+    // Manual reload feature.
+    document.querySelector("button").addEventListener("click", () => {
+        window.location.reload();
+    });
+</script>
+</html>
