@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
 
 import { useAuth } from "../Context/AuthContext";
 import { useGetTrendingCoinDataQuery } from "../services/coinsDataApi";
@@ -43,12 +44,12 @@ const DesktopDashboard = () => {
   } = useUpdateUserNetworthQuery(currentUser.uid);
 
   // get news
-  // const {
-  //   data: news,
-  //   isSuccess: fetchNewsSuccess,
-  //   // error: fetchNewsError,
-  //   isLoading: fetchNewsLoading
-  // } = useGetNewsQuery();
+  const {
+    data: news,
+    isSuccess: fetchNewsSuccess,
+    // error: fetchNewsError,
+    isLoading: fetchNewsLoading
+  } = useGetNewsQuery("Stock Market");
 
   // get available coins
   const {
@@ -299,12 +300,12 @@ const DesktopDashboard = () => {
         Today Top Headlines
       </p>
 
-      {/* <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 px-8 pt-4">
+      <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 px-8 pt-4">
         {fetchNewsSuccess &&
-          news?.slice(0, 6).map((news) => (
+          news?.items?.slice(0, 6).map((news) => (
             <a
               className="relative block p-8 overflow-hidden border border-gray-100 rounded-lg"
-              href={news.url}
+              href={news?.link}
               rel="noreferrer"
               target="_blank"
             >
@@ -312,34 +313,36 @@ const DesktopDashboard = () => {
 
               <div className="justify-between sm:flex">
                 <div>
-                  <h5 className="font-title text-lg font-bold text-white">{news.name}</h5>
+                  <h5 className="font-title text-lg font-bold text-white">{news?.title}</h5>
                   <p className="font-title mt-2 text-xs font-medium text-gray-300">
-                    By {news.provider[0].name}
+                    By {news?.source?.text}
                   </p>
                 </div>
 
-                <div className="flex-shrink-0 hidden ml-3 sm:block">
+                {/* <div className="flex-shrink-0 hidden ml-3 sm:block">
                   <img
                     className="object-cover w-16 h-16 rounded-lg shadow-sm"
                     src={news?.image?.thumbnail?.contentUrl || demoImage}
                     alt="News cover"
                   />
-                </div>
+                </div> */}
               </div>
 
-              <div className="font-text mt-4 sm:pr-8">
+              {/* <div className="font-text mt-4 sm:pr-8">
                 <p className="text-sm text-gray-400 line-clamp-4">{news.description}</p>
-              </div>
+              </div> */}
 
               <dl className="font-text flex mt-6">
                 <div className="flex flex-col-reverse">
                   <dt className="text-sm font-medium text-gray-500">Published</dt>
-                  <dd className="text-xs text-gray-300">{news.datePublished.substring(0, 10)}</dd>
+                  <dd className="text-xs text-gray-300">
+                    {dayjs(news?.pubDate).format("DD MMMM YYYY ")}
+                  </dd>
                 </div>
               </dl>
             </a>
           ))}
-      </div> */}
+      </div>
     </>
   );
 };

@@ -8,12 +8,17 @@ export const NewsApi = createApi({
   baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
     getNews: builder.query({
-      queryFn: async () => {
+      queryFn: async (query) => {
         try {
-          const newsCollectionRef = collection(db, "cryptoNews");
-          const data = await getDocs(newsCollectionRef);
-          const news = data.docs[0].data().news;
-          return { data: news };
+          const res = await fetch(`/api/news?news=${query}`);
+
+          if (!res.ok) {
+            throw new Error(`Something went wrong!`);
+          }
+
+          const data = await res.json();
+
+          return { data: data };
         } catch (error) {
           return { error: error };
         }

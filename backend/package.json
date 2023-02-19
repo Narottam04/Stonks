@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,7 @@
     "express-async-handler": "^1.2.0",
     "express-validator": "^6.14.3",
     "firebase-admin": "^11.5.0",
+    "google-news-json": "^2.1.0",
     "yahoo-finance2": "^2.3.10"
   }
 }
