@@ -37,34 +37,15 @@ export const supabaseApi = createApi({
     getWatchlistData: builder.query({
       queryFn: async (id) => {
         try {
-          let { data: watchlistData } = await supabase
-            .from("watchlist")
-            .select("coinId")
-            .eq("userId", `${id}`);
+          const res = await fetch(`/api/user/allWatchlist?id=${id}`);
 
-          if (watchlistData.length !== 0) {
-            const watchlistId = watchlistData.map((item) => item.coinId);
-
-            let watchlistPromise = [];
-            watchlistId.forEach((coinId) => {
-              // create a promise for each api call
-              const request = fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`);
-              watchlistPromise.push(request);
-            });
-            const res = await Promise.allSettled(watchlistPromise);
-
-            const error = res.filter((result) => result.status === "rejected");
-
-            if (error.length > 0) {
-              throw new Error("Something went wrong! Please try again.");
-            }
-
-            const data = await Promise.all(res.map((r) => r?.value?.json()));
-
-            return { data };
-          } else {
-            return { data: [] };
+          if (!res.ok) {
+            throw new Error(`Something went wrong!`);
           }
+
+          const data = await res.json();
+
+          return { data };
         } catch (error) {
           return { error: error };
         }
@@ -74,35 +55,44 @@ export const supabaseApi = createApi({
     getPortfolioCoinData: builder.query({
       queryFn: async (id) => {
         try {
-          let { data: portfolioData } = await supabase
-            .from("portfolio")
-            .select("coinId")
-            .eq("userId", `${id}`)
-            .not("coinId", "eq", "USD");
+          // let { data: portfolioData } = await supabase
+          //   .from("portfolio")
+          //   .select("coinId")
+          //   .eq("userId", `${id}`)
+          //   .not("coinId", "eq", "USD");
 
-          if (portfolioData.length !== 0) {
-            const portfolioId = portfolioData.map((item) => item.coinId);
+          // if (portfolioData.length !== 0) {
+          //   const portfolioId = portfolioData.map((item) => item.coinId);
 
-            let portfolioPromise = [];
-            portfolioId.forEach((coinId) => {
-              // create a promise for each api call
-              const request = fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`);
-              portfolioPromise.push(request);
-            });
-            const res = await Promise.allSettled(portfolioPromise);
+          //   let portfolioPromise = [];
+          //   portfolioId.forEach((coinId) => {
+          //     // create a promise for each api call
+          //     const request = fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`);
+          //     portfolioPromise.push(request);
+          //   });
+          //   const res = await Promise.allSettled(portfolioPromise);
 
-            const error = res.filter((result) => result.status === "rejected");
+          //   const error = res.filter((result) => result.status === "rejected");
 
-            if (error.length > 0) {
-              throw new Error("Something went wrong! Please try again.");
-            }
+          //   if (error.length > 0) {
+          //     throw new Error("Something went wrong! Please try again.");
+          //   }
 
-            const data = await Promise.all(res.map((r) => r?.value?.json()));
+          //   const data = await Promise.all(res.map((r) => r?.value?.json()));
 
-            return { data };
-          } else {
-            return { data: [] };
+          //   return { data };
+          // } else {
+          //   return { data: [] };
+          // }
+          const res = await fetch(`/api/user/allPortfolio?id=${id}`);
+
+          if (!res.ok) {
+            throw new Error(`Something went wrong!`);
           }
+
+          const data = await res.json();
+
+          return { data };
         } catch (error) {
           return { error: error };
         }
@@ -112,42 +102,40 @@ export const supabaseApi = createApi({
     getUserNetworth: builder.query({
       queryFn: async (id) => {
         try {
-          let { data: portfolio, error } = await supabase
-            .from("portfolio")
-            .select(
-              `
-                coinId,
-                coinName,
-                image,
-                amount
-              `
-            )
-            .eq("userId", `${id}`);
-          if (error) {
-            throw new Error(error);
+          const res = await fetch(`/api/user/networth?id=${id}`);
+
+          if (!res.ok) {
+            throw new Error(`Something went wrong!`);
           }
 
-          if (portfolio !== []) {
-            const userNetworth = portfolio.reduce(
-              (previousValue, currentCoin) => previousValue + currentCoin.amount,
-              0
-            );
+          const data = await res.json();
 
-            const { data, error } = await supabase
-              .from("users")
-              .update({ networth: userNetworth })
-              .eq("userId", `${id}`);
+          return { data };
+        } catch (error) {
+          return { error: error };
+        }
+      }
+    }),
+    updateUserNetworth: builder.query({
+      queryFn: async (id) => {
+        try {
+          const res = await fetch(`/api/user/networth`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              id
+            })
+          });
 
-            if (error) {
-              throw new Error(error);
-            }
-
-            if (data) {
-              return { data: userNetworth };
-            }
-          } else {
+          if (!res.ok) {
             throw new Error("Something went wrong!");
           }
+
+          const data = await res.json();
+
+          return { data };
         } catch (error) {
           return { error: error };
         }
@@ -156,17 +144,15 @@ export const supabaseApi = createApi({
     getLeaderboard: builder.query({
       queryFn: async () => {
         try {
-          let { data: users, error } = await supabase
-            .from("users")
-            .select("username,networth")
-            .order("networth", { ascending: false })
-            .limit(100);
+          const res = await fetch(`/api/user/leaderboard`);
 
-          if (error) {
-            throw new Error(error);
+          if (!res.ok) {
+            throw new Error(`Something went wrong!`);
           }
 
-          return { data: users };
+          const data = await res.json();
+
+          return { data };
         } catch (error) {
           return { error: error };
         }
@@ -176,17 +162,15 @@ export const supabaseApi = createApi({
       queryFn: async (id) => {
         try {
           // get available coins
-          let { data: availableUsdCoin, error } = await supabase
-            .from("portfolio")
-            .select("coinId,coinName,amount")
-            .eq("userId", `${id}`)
-            .eq("coinId", "USD");
+          const res = await fetch(`/api/user/vusd?id=${id}`);
 
-          if (error) {
-            throw new Error(error);
+          if (!res.ok) {
+            throw new Error(`Something went wrong!`);
           }
 
-          return { data: availableUsdCoin };
+          const data = await res.json();
+
+          return { data: data };
         } catch (error) {
           return { error: error };
         }
@@ -201,5 +185,6 @@ export const {
   useGetUserNetworthQuery,
   useGetLeaderboardQuery,
   useFetchAvailableCoinsQuery,
-  useGetPortfolioCoinDataQuery
+  useGetPortfolioCoinDataQuery,
+  useUpdateUserNetworthQuery
 } = supabaseApi;

@@ -58,7 +58,7 @@ const Sidebar = ({ openSidebar, active }) => {
               <span className="ml-3">Search</span>
             </Link>
           </li>
-
+          {/* 
           <li className="my-px">
             <Link
               to="/app/market"
@@ -71,7 +71,7 @@ const Sidebar = ({ openSidebar, active }) => {
               </span>
               <span className="ml-3">Market</span>
             </Link>
-          </li>
+          </li> */}
 
           <li className="my-px">
             <Link

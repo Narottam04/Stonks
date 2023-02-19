@@ -21,15 +21,6 @@ const TabNavigation = () => {
           </Link>
 
           <Link
-            to="/app/market"
-            className="w-full focus:text-teal-500 hover:text-teal-500 justify-center inline-block text-center pt-2 pb-1"
-          >
-            {/* svg */}
-            <AiOutlineBarChart className="inline-block text-white w-7 h-7 mb-1" />
-            <span className="tab tab-whishlist block text-white text-xs">Market</span>
-          </Link>
-
-          <Link
             to="/app/portfolio"
             className="w-full focus:text-teal-500 hover:text-teal-500 justify-center inline-block text-center pt-2 pb-1"
           >
@@ -44,6 +35,14 @@ const TabNavigation = () => {
             {/* svg */}
             <AiOutlineSearch className="inline-block text-white w-7 h-7 mb-1" />
             <span className="tab tab-kategori block text-white text-xs">Search</span>
+          </Link>
+
+          <Link
+            to="/app/watchlist"
+            className="w-full focus:text-teal-500 hover:text-teal-500 justify-center inline-block text-center pt-2 pb-1"
+          >
+            <AiOutlineBarChart className="inline-block text-white w-7 h-7 mb-1" />
+            <span className="tab tab-whishlist block text-white text-xs">Watchlist</span>
           </Link>
 
           <Link

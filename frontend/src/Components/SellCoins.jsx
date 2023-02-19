@@ -10,11 +10,27 @@ import usd from "../Assets/svg/USD.svg";
 import { useAuth } from "../Context/AuthContext";
 import { supabase } from "../Utils/init-supabase";
 import { fetchAvailableCoins } from "../Features/availableCoins";
+import { useGetCurrencyConversionsQuery } from "../services/coinsDataApi";
 
 const SellCoins = ({ data, modal, setModal }) => {
   const { currentUser } = useAuth();
   const [coinValue, setCoinValue] = useState(1);
-  const [coinUsdPrice, setCoinUsdPrice] = useState(data.market_data.current_price.usd);
+
+  const { data: currencyConversion, isLoading: currencyConversionLoading } =
+    useGetCurrencyConversionsQuery();
+
+  const currencyConverter = (amount, usdValueOfAmount) => {
+    const usdEquivalent = amount / usdValueOfAmount;
+    return usdEquivalent.toFixed(2);
+  };
+
+  const [coinUsdPrice, setCoinUsdPrice] = useState(() =>
+    currencyConverter(
+      data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice,
+      currencyConversion.rates[data?.currency]
+    )
+  );
+
   const [orderLoading, setOrderLoading] = useState(false);
 
   const [availabeCoinAmt, setAvailabeCoinAmt] = useState(0);
@@ -28,29 +44,31 @@ const SellCoins = ({ data, modal, setModal }) => {
     dispatch(fetchAvailableCoins(currentUser.uid));
     // get amount of coin that you have purchased
     async function coinAmount() {
-      let {
-        data: availableCoinAmount
-        // , error
-      } = await supabase
-        .from("portfolio")
-        .select("coinName,coinAmount")
-        .eq("userId", `${currentUser.uid}`)
-        .eq("coinId", `${data.id}`);
-      if (availableCoinAmount.length !== 0) {
-        setAvailabeCoinAmt(availableCoinAmount[0].coinAmount);
+      const res = await fetch(`/api/user/getPurchasedStock?stockId=${data?.symbol}`);
+
+      if (!res.ok) {
+        console.log("Could not get available stock");
+      }
+
+      const availableStock = await res.json();
+
+      if (availableStock !== null) {
+        setAvailabeCoinAmt(availableStock.stockAmount);
       }
     }
     coinAmount();
-  }, [currentUser.uid, data.id, dispatch]);
+  }, [currentUser.uid, data.symbol, dispatch]);
 
   const changeCoinValue = (e) => {
     setCoinValue(e.target.value);
-    setCoinUsdPrice(data.market_data.current_price.usd * e.target.value);
-  };
+    // console.log(e.target.value.isInteger());
+    const numOfStocks = e.target.value;
+    const oneStockAmount = data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice;
+    const oneUsdEquivalent = currencyConversion.rates[data?.currency];
 
-  const changeUsdValue = (e) => {
-    setCoinUsdPrice(e.target.value);
-    setCoinValue(e.target.value / data.market_data.current_price.usd);
+    const oneStockInUsd = currencyConverter(oneStockAmount, oneUsdEquivalent);
+    // const usdAmount = currencyConverter
+    setCoinUsdPrice(oneStockInUsd * numOfStocks);
   };
 
   async function onPlaceOrder() {
@@ -62,55 +80,77 @@ const SellCoins = ({ data, modal, setModal }) => {
         throw new Error("Not enough coins!");
       }
 
-      // check if the coin is already purchased i.e. add the coin amount  to our existing coin in portfolio db
-
-      // update the sold coin to database
-      const portfolioUsdAmount = data.market_data.current_price.usd * (availabeCoinAmt - coinValue);
-      const updatedCoinAmount = availabeCoinAmt - coinValue;
-
-      const {
-        // data: removefromPortfolio,
-        error: removefromPortfolioError
-      } = await supabase
-        .from("portfolio")
-        .update([
-          {
-            amount: `${portfolioUsdAmount.toFixed(3)}`,
-            coinAmount: `${updatedCoinAmount.toFixed(3)}`
-          }
-        ])
-        .eq("userId", `${currentUser.uid}`)
-        .eq("coinId", `${data.id}`);
-
-      if (removefromPortfolioError) {
-        throw new Error("Something went wrong, Please try again!");
+      const sellStock = await fetch("/api/user/sellStock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: currentUser.uid,
+          stockAmount: parseInt(coinValue),
+          stockPrice: Math.round(parseFloat(coinUsdPrice) * 1e3) / 1e3,
+          symbol: data?.symbol,
+          name: data?.displayName ? data?.displayName : data?.shortName
+        })
+      });
+      if (!sellStock.ok) {
+        throw new Error("Something went wrong! Please try again.");
       }
 
-      // add the value to virtual usd
-      let updatedUsdValue = availableUsdCoins.data.amount + coinUsdPrice;
+      const res = await sellStock.json();
+      console.log("result........", res);
 
-      let {
-        // data: updateUsdCoin,
-        error: updateUsdCoinError
-      } = await supabase
-        .from("portfolio")
-        .update({ amount: updatedUsdValue })
-        .eq("userId", `${currentUser.uid}`)
-        .eq("coinId", "USD");
+      // // check if the coin is already purchased i.e. add the coin amount  to our existing coin in portfolio db
 
-      if (updateUsdCoinError) {
-        throw new Error("Something went wrong!");
-      }
+      // // update the sold coin to database
+      // const portfolioUsdAmount =
+      //   (data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice) *
+      //   (availabeCoinAmt - coinValue);
+      // const updatedCoinAmount = availabeCoinAmt - coinValue;
 
-      // delete the portfolio from db if the coinValue is 0
-      if (updatedCoinAmount === 0) {
-        // const {data: deleteRow, error: errorRow } =
-        await supabase
-          .from("portfolio")
-          .delete()
-          .eq("userId", `${currentUser.uid}`)
-          .eq("coinId", `${data.id}`);
-      }
+      // const {
+      //   // data: removefromPortfolio,
+      //   error: removefromPortfolioError
+      // } = await supabase
+      //   .from("portfolio")
+      //   .update([
+      //     {
+      //       amount: `${portfolioUsdAmount.toFixed(3)}`,
+      //       coinAmount: `${updatedCoinAmount.toFixed(3)}`
+      //     }
+      //   ])
+      //   .eq("userId", `${currentUser.uid}`)
+      //   .eq("coinId", `${data.id}`);
+
+      // if (removefromPortfolioError) {
+      //   throw new Error("Something went wrong, Please try again!");
+      // }
+
+      // // add the value to virtual usd
+      // let updatedUsdValue = availableUsdCoins.data.amount + coinUsdPrice;
+
+      // let {
+      //   // data: updateUsdCoin,
+      //   error: updateUsdCoinError
+      // } = await supabase
+      //   .from("portfolio")
+      //   .update({ amount: updatedUsdValue })
+      //   .eq("userId", `${currentUser.uid}`)
+      //   .eq("coinId", "USD");
+
+      // if (updateUsdCoinError) {
+      //   throw new Error("Something went wrong!");
+      // }
+
+      // // delete the portfolio from db if the coinValue is 0
+      // if (updatedCoinAmount === 0) {
+      //   // const {data: deleteRow, error: errorRow } =
+      //   await supabase
+      //     .from("portfolio")
+      //     .delete()
+      //     .eq("userId", `${currentUser.uid}`)
+      //     .eq("coinId", `${data.id}`);
+      // }
 
       // calculate networth
 
@@ -152,7 +192,8 @@ const SellCoins = ({ data, modal, setModal }) => {
           <div className="px-6 py-3 md:p-6">
             <p className="text-base leading-relaxed font-semibold text-gray-200">
               1 <span className="uppercase">{data.symbol}</span> ={" "}
-              {data.market_data.current_price.usd} USD
+              {data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice}{" "}
+              {data?.currency}
             </p>
 
             <p className="text-base leading-relaxed font-semibold text-gray-200">
@@ -166,7 +207,7 @@ const SellCoins = ({ data, modal, setModal }) => {
 
             <div className="relative py-4">
               <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                <img src={data?.image?.small} alt={data.name} className="h-5 w-5" />
+                {/* <img src={data?.image?.small} alt={data.name} className="h-5 w-5" /> */}
               </div>
               <input
                 type="number"
@@ -192,7 +233,6 @@ const SellCoins = ({ data, modal, setModal }) => {
                 id="coinUsdValue"
                 name="coinUsdValue"
                 value={coinUsdPrice}
-                onChange={changeUsdValue}
                 className=" border   text-sm rounded-lg block w-full pl-10 p-2.5  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -206,7 +246,7 @@ const SellCoins = ({ data, modal, setModal }) => {
               className="text-white  focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
               onClick={onPlaceOrder}
             >
-              {orderLoading ? `Selling ${data.name}...` : `Sell ${data.name}`}
+              {orderLoading ? `Selling ${data?.symbol}...` : `Sell ${data?.symbol}`}
             </button>
           </div>
         </div>

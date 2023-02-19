@@ -49,6 +49,59 @@ export const coinsDataApi = createApi({
           return { error: error };
         }
       }
+    }),
+    getStockData: builder.query({
+      queryFn: async (id) => {
+        try {
+          const res = await fetch(`/api/stocks/quote/summary?stock=${id}`);
+
+          if (!res.ok) {
+            throw new Error("Something went wrong! Please try again");
+          }
+
+          const data = await res.json();
+
+          return { data };
+        } catch (error) {
+          return { error: error };
+        }
+      }
+    }),
+    getStockHistoricalData: builder.query({
+      queryFn: async ({ id, startDate, endDate }) => {
+        try {
+          const res = await fetch(
+            `/api/stocks/quote/historical?stock=${id}&start=${startDate}&end=${endDate}`
+          );
+
+          if (!res.ok) {
+            throw new Error("Something went wrong! Please try again");
+          }
+
+          const data = await res.json();
+
+          return { data };
+        } catch (error) {
+          return { error: error };
+        }
+      }
+    }),
+    getCurrencyConversions: builder.query({
+      queryFn: async (id) => {
+        try {
+          const res = await fetch(`https://open.er-api.com/v6/latest/USD`);
+
+          if (!res.ok) {
+            throw new Error("Something went wrong! Please try again");
+          }
+
+          const data = await res.json();
+
+          return { data };
+        } catch (error) {
+          return { error: error };
+        }
+      }
     })
     // getWatchlistData: builder.query({
     //     query: async (WatchlistIds, _queryApi, _extraOptions, baseQuery) => {
@@ -71,5 +124,8 @@ export const {
   useGetCoinDataQuery,
   useGetHistoricalDataQuery,
   useGetTrendingCoinDataQuery,
-  useGetGlobalCryptoDataQuery
+  useGetGlobalCryptoDataQuery,
+  useGetStockDataQuery,
+  useGetStockHistoricalDataQuery,
+  useGetCurrencyConversionsQuery
 } = coinsDataApi;

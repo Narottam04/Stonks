@@ -9,14 +9,30 @@ import usd from "../Assets/svg/USD.svg";
 import { useAuth } from "../Context/AuthContext";
 import { supabase } from "../Utils/init-supabase";
 import { fetchAvailableCoins } from "../Features/availableCoins";
+import { useGetCurrencyConversionsQuery } from "../services/coinsDataApi";
 
 const BuyCoins = ({ data, modal, setModal }) => {
   const { currentUser } = useAuth();
   const [coinValue, setCoinValue] = useState(1);
-  const [coinUsdPrice, setCoinUsdPrice] = useState(data.market_data.current_price.usd);
+
+  const { data: currencyConversion, isLoading: currencyConversionLoading } =
+    useGetCurrencyConversionsQuery();
+
+  const currencyConverter = (amount, usdValueOfAmount) => {
+    const usdEquivalent = amount / usdValueOfAmount;
+    return usdEquivalent.toFixed(2);
+  };
+
+  const [coinUsdPrice, setCoinUsdPrice] = useState(() =>
+    currencyConverter(
+      data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice,
+      currencyConversion.rates[data?.currency]
+    )
+  );
   const [orderLoading, setOrderLoading] = useState(false);
 
   const availableUsdCoins = useSelector((state) => state.availableCoins);
+
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -27,93 +43,117 @@ const BuyCoins = ({ data, modal, setModal }) => {
 
   const changeCoinValue = (e) => {
     setCoinValue(e.target.value);
-    setCoinUsdPrice(data.market_data.current_price.usd * e.target.value);
-  };
+    // console.log(e.target.value.isInteger());
+    const numOfStocks = e.target.value;
+    const oneStockAmount = data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice;
+    const oneUsdEquivalent = currencyConversion.rates[data?.currency];
 
-  const changeUsdValue = (e) => {
-    setCoinUsdPrice(e.target.value);
-    setCoinValue(e.target.value / data.market_data.current_price.usd);
+    const oneStockInUsd = currencyConverter(oneStockAmount, oneUsdEquivalent);
+    // const usdAmount = currencyConverter
+    setCoinUsdPrice(oneStockInUsd * numOfStocks);
   };
 
   async function onPlaceOrder() {
     try {
       setOrderLoading(true);
-      // get available coins and check if it is lesser than what we want to purchase
-      let { data: availableUsdCoin } = await supabase
-        .from("portfolio")
-        .select("coinId,coinName,amount")
-        .eq("userId", `${currentUser.uid}`)
-        .eq("coinId", "USD");
 
-      if (coinUsdPrice > availableUsdCoin[0].amount) {
-        throw new Error("Not enough coins!");
+      const buyStock = await fetch("/api/user/buyStock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: currentUser.uid,
+          stockAmount: parseInt(coinValue),
+          stockPrice: Math.round(parseFloat(coinUsdPrice) * 1e3) / 1e3,
+          symbol: data?.symbol,
+          name: data?.displayName ? data?.displayName : data?.shortName
+        })
+      });
+      if (!buyStock.ok) {
+        throw new Error("Something went wrong! Please try again.");
       }
 
-      // check if the coin is already purchased i.e. add the coin amount coin to our existing coin in portfolio db
-      let {
-        data: existingCoin
-        // error: existingCoinErr
-      } = await supabase
-        .from("portfolio")
-        .select("coinId,coinName,amount,coinAmount")
-        .eq("userId", `${currentUser.uid}`)
-        .eq("coinId", `${data.id}`);
+      const res = await buyStock.json();
+      console.log("result........", res);
 
-      if (existingCoin.length !== 0) {
-        let { data: updateExistingCoin, error: updateExistingCoinErr } = await supabase
-          .from("portfolio")
-          .update({
-            amount: `${Number(existingCoin[0].amount) + Number(coinUsdPrice)}`,
-            coinAmount: `${Number(existingCoin[0].coinAmount) + Number(coinValue)}`
-          })
-          .eq("userId", `${currentUser.uid}`)
-          .eq("coinId", `${data.id}`);
+      // // get available coins and check if it is lesser than what we want to purchase
+      // let { data: availableUsdCoin } = await supabase
+      //   .from("portfolio")
+      //   .select("coinId,coinName,amount")
+      //   .eq("userId", `${currentUser.uid}`)
+      //   .eq("coinId", "USD");
 
-        if (updateExistingCoin) {
-          setOrderLoading(false);
-          alert("Coin purchased successfully");
-          return;
-        }
-        if (updateExistingCoinErr) {
-          throw new Error("Something went wrong, Please try again!");
-        }
-      }
+      // if (coinUsdPrice > availableUsdCoin[0].amount) {
+      //   throw new Error("Not enough coins!");
+      // }
 
-      // if not already present add the purchased coin to database
-      const {
-        // data: addToPortfolio,
-        error: addToPortfolioError
-      } = await supabase.from("portfolio").insert([
-        {
-          userId: `${currentUser.uid}`,
-          coinId: `${data.id}`,
-          coinSymbol: `${data.symbol}`,
-          coinName: `${data.name}`,
-          image: `${data.image.large}`,
-          amount: `${coinUsdPrice}`,
-          coinAmount: `${coinValue}`
-        }
-      ]);
+      // // check if the coin is already purchased i.e. add the coin amount coin to our existing coin in portfolio db
+      // let {
+      //   data: existingCoin
+      //   // error: existingCoinErr
+      // } = await supabase
+      //   .from("portfolio")
+      //   .select("coinId,coinName,amount,coinAmount")
+      //   .eq("userId", `${currentUser.uid}`)
+      //   .eq("coinId", `${data.id}`);
 
-      if (addToPortfolioError) {
-        throw new Error("Something went wrong, Please try again!");
-      }
+      // if (existingCoin.length !== 0) {
+      //   let { data: updateExistingCoin, error: updateExistingCoinErr } = await supabase
+      //     .from("portfolio")
+      //     .update({
+      //       amount: `${Number(existingCoin[0].amount) + Number(coinUsdPrice)}`,
+      //       coinAmount: `${Number(existingCoin[0].coinAmount) + Number(coinValue)}`
+      //     })
+      //     .eq("userId", `${currentUser.uid}`)
+      //     .eq("coinId", `${data.id}`);
 
-      // deduct the value from virtual usd
-      let updatedUsdValue = availableUsdCoin[0].amount - coinUsdPrice;
+      //   if (updateExistingCoin) {
+      //     setOrderLoading(false);
+      //     alert("Coin purchased successfully");
+      //     navigate("/app/portfolio");
+      //     return;
+      //   }
+      //   if (updateExistingCoinErr) {
+      //     throw new Error("Something went wrong, Please try again!");
+      //   }
+      // }
 
-      let {
-        // data: updateUsdCoin,
-        error: updateUsdCoinError
-      } = await supabase
-        .from("portfolio")
-        .update({ amount: updatedUsdValue })
-        .eq("userId", `${currentUser.uid}`)
-        .eq("coinId", "USD");
+      // // if not already present add the purchased coin to database
+      // const {
+      //   // data: addToPortfolio,
+      //   error: addToPortfolioError
+      // } = await supabase.from("portfolio").insert([
+      //   {
+      //     userId: `${currentUser.uid}`,
+      //     coinId: `${data.id}`,
+      //     coinSymbol: `${data.symbol}`,
+      //     coinName: `${data.name}`,
+      //     image: `${data.image.large}`,
+      //     amount: `${coinUsdPrice}`,
+      //     coinAmount: `${coinValue}`
+      //   }
+      // ]);
 
-      if (updateUsdCoinError) {
-        throw new Error("Something went wrong!");
-      }
+      // if (addToPortfolioError) {
+      //   throw new Error("Something went wrong, Please try again!");
+      // }
+
+      // // deduct the value from virtual usd
+      // let updatedUsdValue = availableUsdCoin[0].amount - coinUsdPrice;
+
+      // let {
+      //   // data: updateUsdCoin,
+      //   error: updateUsdCoinError
+      // } = await supabase
+      //   .from("portfolio")
+      //   .update({ amount: updatedUsdValue })
+      //   .eq("userId", `${currentUser.uid}`)
+      //   .eq("coinId", "USD");
+
+      // if (updateUsdCoinError) {
+      //   throw new Error("Something went wrong!");
+      // }
 
       // // calculate networth
 
@@ -140,7 +180,8 @@ const BuyCoins = ({ data, modal, setModal }) => {
           {/* Modal header  */}
           <div className="flex justify-between items-center px-5 py-3 md:p-5 rounded-t border-b border-gray-600">
             <h3 className="text-md md:text-xl font-medium  text-white">
-              Buy {data.name} | <span className="uppercase">{data.symbol}</span>
+              Buy {data?.displayName ? data?.displayName : data?.shortName} |{" "}
+              <span className="uppercase">{data.symbol}</span>
             </h3>
             <button
               type="button"
@@ -152,10 +193,12 @@ const BuyCoins = ({ data, modal, setModal }) => {
             </button>
           </div>
           {/* Modal body  */}
+          {console.log(data?.currency)}
           <div className="px-6 py-3 md:p-6">
             <p className="text-base leading-relaxed font-semibold text-gray-200">
               1 <span className="uppercase">{data.symbol}</span> ={" "}
-              {data.market_data.current_price.usd} USD
+              {data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice}{" "}
+              {data?.currency}
             </p>
 
             <p className="text-base leading-relaxed font-semibold text-gray-200">
@@ -165,7 +208,7 @@ const BuyCoins = ({ data, modal, setModal }) => {
 
             <div className="relative py-4">
               <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                <img src={data?.image?.small} alt={data.name} className="h-5 w-5" />
+                {/* <img src={data?.image?.small} alt={data.name} className="h-5 w-5" /> */}
               </div>
               <input
                 type="number"
@@ -191,7 +234,7 @@ const BuyCoins = ({ data, modal, setModal }) => {
                 id="coinUsdValue"
                 name="coinUsdValue"
                 value={coinUsdPrice}
-                onChange={changeUsdValue}
+                readOnly={true}
                 className=" border   text-sm rounded-lg block w-full pl-10 p-2.5  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -205,7 +248,7 @@ const BuyCoins = ({ data, modal, setModal }) => {
               className="text-white  focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
               onClick={onPlaceOrder}
             >
-              {orderLoading ? `Buying ${data.name}...` : `Buy ${data.name}`}
+              {orderLoading ? `Buying ${data?.symbol}...` : `Buy ${data?.symbol}`}
             </button>
           </div>
         </div>

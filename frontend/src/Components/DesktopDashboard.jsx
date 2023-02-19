@@ -8,7 +8,8 @@ import {
   useFetchAvailableCoinsQuery,
   useGetLeaderboardQuery,
   useGetUserNetworthQuery,
-  useGetWatchlistDataQuery
+  useGetWatchlistDataQuery,
+  useUpdateUserNetworthQuery
 } from "../services/supabaseApi";
 
 import Loader from "./Loader";
@@ -39,21 +40,21 @@ const DesktopDashboard = () => {
     data: userNetworth,
     isSuccess: userNetworthSuccess
     // error: networthError
-  } = useGetUserNetworthQuery(currentUser.uid);
+  } = useUpdateUserNetworthQuery(currentUser.uid);
 
   // get news
-  const {
-    data: news,
-    isSuccess: fetchNewsSuccess,
-    // error: fetchNewsError,
-    isLoading: fetchNewsLoading
-  } = useGetNewsQuery();
+  // const {
+  //   data: news,
+  //   isSuccess: fetchNewsSuccess,
+  //   // error: fetchNewsError,
+  //   isLoading: fetchNewsLoading
+  // } = useGetNewsQuery();
 
   // get available coins
   const {
     data: availableUsdCoins,
     isSuccess: fetchAvailableUsdCoinsSuccess,
-    // error: fetchAvailableUsdCoinsError,
+    error: fetchAvailableUsdCoinsError,
     isLoading: fetchAvailableUsdCoinsLoading,
     refetch: refetchAvailableCoins
   } = useFetchAvailableCoinsQuery(currentUser.uid);
@@ -77,7 +78,7 @@ const DesktopDashboard = () => {
       {/* loading State */}
       {(isLoading ||
         fetchWatchlistLoading ||
-        fetchNewsLoading ||
+        // fetchNewsLoading ||
         fetchAvailableUsdCoinsLoading ||
         leaderboardIsLoading) && <Loader />}
       {/* credit card */}
@@ -97,7 +98,7 @@ const DesktopDashboard = () => {
           <div className="pt-1">
             <h4 className="">Account Balance</h4>
             <p className="font-semibold tracking-more-wider">
-              ${fetchAvailableUsdCoinsSuccess && availableUsdCoins[0]?.amount}
+              ${fetchAvailableUsdCoinsSuccess && availableUsdCoins?.amount}
             </p>
           </div>
           <div className="pt-6 pr-6">
@@ -105,7 +106,7 @@ const DesktopDashboard = () => {
               <div className="">
                 <h4 className="font-light text-xs">Networth</h4>
                 <p className="font-semibold tracking-wider text-sm">
-                  {userNetworthSuccess && <span>${userNetworth}</span>}
+                  {userNetworthSuccess && <span>${userNetworth.networth}</span>}
                 </p>
               </div>
               {/* <div className="">
@@ -165,7 +166,7 @@ const DesktopDashboard = () => {
           </p>
 
           <ul>
-            {fetchWatchlistErr ? (
+            {fetchWatchlistErr || watchlistData?.length === 0 ? (
               <div className=" shadow-lg rounded-2xl  px-4 py-4 md:px-4 bg-gray-900 flex flex-col ;lg:justify-center font-text">
                 <p className="text-white text-xl font-bold my-2 lg:text-center">
                   Your watchlist is empty
@@ -174,40 +175,52 @@ const DesktopDashboard = () => {
                   Press the button to browse all the coins
                 </p>
                 <Link
-                  to="/app/market"
+                  to="/app/search"
                   className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
                 >
-                  View Coins
+                  Search Coins
                 </Link>
               </div>
             ) : (
               fetchWatchlistSuccess &&
-              watchlistData.slice(0, 7).map((coin, index) => (
+              watchlistData.slice(0, 7).map((stock, index) => (
                 <li
                   key={index}
                   className="flex items-center font-text text-gray-200 justify-between py-3 border-b-2 border-gray-800 "
                 >
                   <div className="flex items-center justify-start text-sm space-x-3">
-                    <img src={coin.image.large} alt={`${coin.name}`} className="w-10 h-10" />
+                    {/* <img src={coin.image.large} alt={`${coin.name}`} className="w-10 h-10" /> */}
                     <div className="">
-                      <p className="text-white text-xl font-bold ">{coin.name}</p>
-                      <p className="text-white uppercase text-sm">{coin.symbol}</p>
+                      <p className="text-white text-xl font-bold ">
+                        {stock?.displayName ? stock?.displayName : stock?.shortName}
+                      </p>
+                      <p className="text-white uppercase text-sm">{stock?.symbol}</p>
                     </div>
                   </div>
                   <div className="">
                     <p className="text-white font-bold">
-                      ${coin.market_data.current_price.usd}
+                      {stock?.preMarketPrice ? stock?.preMarketPrice : stock?.regularMarketPrice}{" "}
+                      {stock?.currency}
                       <br />
                     </p>
                     <p
                       className={`text-right ${
-                        coin?.market_data.price_change_percentage_24h >= 0
+                        stock?.preMarketChangePercent
+                          ? stock?.preMarketChangePercent >= 0
+                            ? "text-green-400"
+                            : "text-red-400"
+                          : stock?.regularMarketChange >= 0
                           ? "text-green-400"
                           : "text-red-400"
                       } font-semibold`}
                     >
-                      {coin?.market_data.price_change_percentage_24h >= 0 && "+"}
-                      {coin?.market_data.price_change_percentage_24h?.toFixed(2)}%
+                      {stock?.preMarketChangePercent
+                        ? stock?.preMarketChangePercent >= 0 && "+"
+                        : stock?.regularMarketChange >= 0 && "+"}
+                      {stock?.preMarketChangePercent
+                        ? stock?.preMarketChangePercent.toFixed(3)
+                        : stock?.regularMarketChange.toFixed(3)}
+                      %
                     </p>
                   </div>
                 </li>
@@ -269,7 +282,7 @@ const DesktopDashboard = () => {
                   )}
                 </div>
                 <div className="flex items-center justify-start ml-auto md:ml-0 ">
-                  <p className="w-28 md:w-40 truncate text-white font-medium">{user.username}</p>
+                  <p className="w-28 md:w-40 truncate text-white font-medium">{user.name}</p>
                 </div>
                 <div className="flex items-center justify-end ml-auto md:ml-0 ">
                   <p className="w-28 md:w-40 break-all text-white font-medium text-right">
@@ -286,7 +299,7 @@ const DesktopDashboard = () => {
         Today Top Headlines
       </p>
 
-      <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 px-8 pt-4">
+      {/* <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 px-8 pt-4">
         {fetchNewsSuccess &&
           news?.slice(0, 6).map((news) => (
             <a
@@ -326,7 +339,7 @@ const DesktopDashboard = () => {
               </dl>
             </a>
           ))}
-      </div>
+      </div> */}
     </>
   );
 };

@@ -3,6 +3,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import { stocksRoute } from "./routes/stocksRoute";
 import { errorHandler, notFound } from "./middlewares/ErrorMiddleware";
+import { userRoute } from "./routes/userRoutes";
 
 dotenv.config();
 
@@ -21,16 +22,16 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req: Request, res: Response) => {
   return res.json({
     success: true,
-    data: "home page"
+    data: "Welcome to Stonks API"
   });
 });
 
+app.use("/api/user", userRoute);
 app.use("/api/stocks", stocksRoute);
 
-
-// custom error handler 
-app.use(notFound)
-app.use(errorHandler)
+// custom error handler
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Application listening at http://localhost:${PORT}`);

@@ -1,15 +1,19 @@
 import { lazy, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../Context/AuthContext";
-import { supabase } from "../Utils/init-supabase";
 
-import { useGetCoinDataQuery, useGetHistoricalDataQuery } from "../services/coinsDataApi";
+import {
+  useGetCurrencyConversionsQuery,
+  useGetStockDataQuery,
+  useGetStockHistoricalDataQuery
+} from "../services/coinsDataApi";
 
 import { HistoricalChart, HistoricalLineChart } from "../Components/CoinChart";
 import ErrorToast from "../Components/ErrorToast";
 import Loader from "../Components/Loader";
+import dayjs from "dayjs";
 
 // import BuyCoins from "../Components/BuyCoins";
 // import SellCoins from "../Components/SellCoins";
@@ -22,11 +26,14 @@ const CurrencyDetailsPage = () => {
   const { id } = useParams();
   const toastRef = useRef(null);
   const navigate = useNavigate();
-
+  const location = useLocation();
   const { currentUser } = useAuth();
 
   const [addToGun, setAddToGun] = useState(false);
   const [chartDays, setChartDays] = useState("365");
+  const [startDate, setStartDate] = useState(
+    dayjs(Date.now()).subtract(365, "days").format("YYYY-MM-DD")
+  );
   const [candleStickChart, setCandleStickChart] = useState(true);
 
   const [gunError, setGunError] = useState(false);
@@ -35,16 +42,20 @@ const CurrencyDetailsPage = () => {
   const [toggleBuyCoinsModal, setToggleBuyCoinsModal] = useState(false);
   const [toggleSellCoinsModal, setToggleSellCoinsModal] = useState(false);
 
-  const { data, error, isLoading, isSuccess } = useGetCoinDataQuery(id, { pollingInterval: 10000 });
+  const { data, error, isLoading, isSuccess } = useGetStockDataQuery(id);
+
+  const { data: currencyConversions, isLoading: currencyConversionLoading } =
+    useGetCurrencyConversionsQuery();
 
   const {
     data: chartData,
     error: fetchChartDataError,
     isLoading: isChartLoading,
     isSuccess: chartDataSuccess
-  } = useGetHistoricalDataQuery({
+  } = useGetStockHistoricalDataQuery({
     id,
-    chartDays
+    startDate,
+    endDate: dayjs(Date.now()).format("YYYY-MM-DD")
   });
 
   useEffect(() => {
@@ -59,16 +70,29 @@ const CurrencyDetailsPage = () => {
     setGunErrorMessage("");
 
     setAddToGun(true);
-    let { data: watchlist, error } = await supabase
-      .from("watchlist")
-      .select("coinId,userId")
-      .eq("userId", `${currentUser.uid}`)
-      .eq("coinId", `${data.id}`);
+    // check if stock already on watchlist
+    const checkWatchlist = await fetch(
+      `/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
+    );
 
-    if (watchlist.length === 0) {
-      const { data: updateWatchlistData, error } = await supabase
-        .from("watchlist")
-        .upsert([{ coinId: data.id, userId: currentUser.uid }]);
+    if (!checkWatchlist.ok) {
+      throw new Error(`Something went wrong!`);
+    }
+
+    const watchlist = await checkWatchlist.json();
+
+    if (watchlist === null) {
+      // add the stock to watchlist
+      await fetch("/api/user/watchlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: currentUser.uid,
+          symbol: data?.symbol
+        })
+      });
 
       console.log("added to db/watchlist successfully");
       navigate("/app/watchlist");
@@ -82,17 +106,7 @@ const CurrencyDetailsPage = () => {
       setAddToGun(false);
       return;
     }
-    // if(watchlist.includes(data.id)){
-    //   setGunErrorMessage('already added to watchlist')
-    //   setGunError(true)
-    //   setTimeout(() => {
-    //     setGunError(false)
-    //   }, 1500);
-    //   return
-    // }
   }
-
-  useEffect(() => {}, []);
 
   const normalizeMarketCap = (marketCap) => {
     if (marketCap > 1_000_000_000_000) {
@@ -158,10 +172,11 @@ const CurrencyDetailsPage = () => {
           <div className="flex flex-col md:flex-row md:space-x-8">
             {/* coin data */}
             <div className="flex items-center space-x-2">
-              <img src={data.image.large} className="w-12" alt={data.name} />
               <div>
-                <p className="text-white font-title text-3xl font-bold">{data.name}</p>
-                <p className="text-gray-300 text-md uppercase font-semibold">{data.symbol}</p>
+                <p className="text-white font-title text-3xl font-bold">
+                  {data?.displayName ? data?.displayName : data?.shortName}
+                </p>
+                <p className="text-gray-300 text-md uppercase font-semibold">{data?.symbol}</p>
               </div>
             </div>
 
@@ -172,7 +187,8 @@ const CurrencyDetailsPage = () => {
                 </div>
                 <div className="flex flex-col justify-start">
                   <p className=" text-lg text-left md:text-2xl text-white font-bold my-2">
-                    ${data.market_data.current_price.usd}
+                    {data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice}{" "}
+                    {data?.currency}
                   </p>
                 </div>
               </div>
@@ -184,13 +200,22 @@ const CurrencyDetailsPage = () => {
                 <div className="flex flex-col justify-start">
                   <p
                     className={`text-lg text-left md:text-2xl font-bold my-2 ${
-                      data?.market_data.price_change_percentage_24h >= 0
+                      data?.preMarketChangePercent
+                        ? data?.preMarketChangePercent >= 0
+                          ? "text-green-400"
+                          : "text-red-400"
+                        : data?.regularMarketChange >= 0
                         ? "text-green-400"
                         : "text-red-400"
                     } `}
                   >
-                    {data?.market_data.price_change_percentage_24h >= 0 && "+"}
-                    {data.market_data.price_change_percentage_24h.toFixed(3)}%
+                    {data?.preMarketChangePercent
+                      ? data?.preMarketChangePercent >= 0 && "+"
+                      : data?.regularMarketChange >= 0 && "+"}
+                    {data?.preMarketChangePercent
+                      ? data?.preMarketChangePercent.toFixed(3)
+                      : data?.regularMarketChange.toFixed(3)}
+                    %
                   </p>
                 </div>
               </div>
@@ -201,7 +226,7 @@ const CurrencyDetailsPage = () => {
                 </div>
                 <div className="flex flex-col justify-start">
                   <p className=" text-lg text-left md:text-2xl text-white font-bold my-2">
-                    {normalizeMarketCap(data.market_data.total_volume.usd)}
+                    {normalizeMarketCap(data?.regularMarketVolume)}
                   </p>
                 </div>
               </div>
@@ -259,34 +284,43 @@ const CurrencyDetailsPage = () => {
       </div>
       {isSuccess && (
         <p className="text-white font-bold text-2xl font-title my-4 ml-2 md:ml-4">
-          {data.name} Price Chart <span className="uppercase">{data.symbol}</span>{" "}
+          {data?.displayName ? data?.displayName : data?.shortName} Price Chart{" "}
+          <span className="uppercase">{data?.symbol}</span>{" "}
         </p>
       )}
 
-      <div className="mb-6 ml-2 md:ml-4 inline-flex  rounded-md shadow-sm" role="group">
+      <div className="mt-4 mb-6 ml-2 md:ml-4 inline-flex  rounded-md shadow-sm" role="group">
         <button
-          onClick={() => setChartDays(() => "1")}
+          onClick={() =>
+            setStartDate(() => dayjs(Date.now()).subtract(30, "days").format("YYYY-MM-DD"))
+          }
           type="button"
           className="py-2 px-4 font-text text-xs md:text-sm font-semibold  rounded-l-lg border  focus:z-10 focus:ring-2  bg-gray-900 border-gray-600 text-white hover:text-white hover:bg-gray-600 focus:ring-blue-500 focus:text-white"
-        >
-          24 Hours
-        </button>
-        <button
-          onClick={() => setChartDays(() => "30")}
-          type="button"
-          className="py-2 px-4 font-text text-xs md:text-sm font-semibold  border-t border-b  focus:z-10 focus:ring-2  bg-gray-900 border-gray-600 text-white hover:text-white hover:bg-gray-600 focus:ring-blue-500 focus:text-white"
         >
           30 Days
         </button>
         <button
-          onClick={() => setChartDays(() => "90")}
+          onClick={() =>
+            setStartDate(() => dayjs(Date.now()).subtract(90, "days").format("YYYY-MM-DD"))
+          }
           type="button"
           className="py-2 px-4 font-text text-xs md:text-sm font-semibold   border  focus:z-10 focus:ring-2  bg-gray-900 border-gray-600 text-white hover:text-white hover:bg-gray-600 focus:ring-blue-500 focus:text-white"
         >
           3 Months
         </button>
         <button
-          onClick={() => setChartDays(() => "365")}
+          onClick={() =>
+            setStartDate(() => dayjs(Date.now()).subtract(180, "days").format("YYYY-MM-DD"))
+          }
+          type="button"
+          className="py-2 px-4 font-text text-xs md:text-sm font-semibold   border  focus:z-10 focus:ring-2  bg-gray-900 border-gray-600 text-white hover:text-white hover:bg-gray-600 focus:ring-blue-500 focus:text-white"
+        >
+          6 Months
+        </button>
+        <button
+          onClick={() =>
+            setStartDate(() => dayjs(Date.now()).subtract(365, "days").format("YYYY-MM-DD"))
+          }
           type="button"
           className="py-2 px-4 font-text text-xs md:text-sm font-semibold   border  focus:z-10 focus:ring-2  bg-gray-900 border-gray-600 text-white hover:text-white hover:bg-gray-600 focus:ring-blue-500 focus:text-white"
         >
@@ -315,15 +349,28 @@ const CurrencyDetailsPage = () => {
 
       {/* <HistoricalChart id={id} /> */}
       {/* prettier-ignore */}
-      {(isSuccess && chartDataSuccess && candleStickChart) && (
-        <HistoricalChart id={id} data={chartData} days={chartDays} />
+      {chartDataSuccess && candleStickChart && (
+        <HistoricalChart id={id} data={chartData} days={chartDays} currency={data?.currency} />
       )}
       {/* prettier-ignore */}
-      {(isSuccess && chartDataSuccess && !candleStickChart) && (
-        <HistoricalLineChart id={id} data={chartData} days={chartDays} name={data.name} />
+      {chartDataSuccess && !candleStickChart && (
+        <HistoricalLineChart
+          id={id}
+          data={chartData}
+          days={chartDays}
+          name={data?.displayName ? data?.displayName : data?.shortName}
+          currency={data?.currency}
+        />
       )}
 
-      {isSuccess && <CoinStats data={data} />}
+      {isSuccess && (
+        <CoinStats
+          data={data}
+          stockData={data}
+          currencyRates={currencyConversions}
+          news={location.state?.news}
+        />
+      )}
     </section>
   );
 };

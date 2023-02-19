@@ -93,7 +93,7 @@ const Leaderboard = () => {
                 )}
               </div>
               <div className="flex items-center justify-start ml-auto md:ml-0 ">
-                <p className="w-28 md:w-40 truncate text-white font-semibold">{user.username}</p>
+                <p className="w-28 md:w-40 truncate text-white font-semibold">{user.name}</p>
               </div>
               <div className="flex items-center justify-end ml-auto md:ml-0 ">
                 <p className="w-28 md:w-40 break-all text-white font-semibold text-right">

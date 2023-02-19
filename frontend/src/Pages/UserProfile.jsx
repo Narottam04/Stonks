@@ -5,6 +5,7 @@ import { useAuth } from "../Context/AuthContext";
 import {
   useFetchAvailableCoinsQuery,
   useGetLeaderboardQuery,
+  useGetPortfolioCoinDataQuery,
   useGetPortfolioDataQuery,
   useGetUserNetworthQuery,
   useGetWatchlistDataQuery
@@ -59,7 +60,7 @@ const UserProfile = () => {
     // isFetching,
     isSuccess
     // refetch: refetchPortfolioData
-  } = useGetPortfolioDataQuery(currentUser.uid);
+  } = useGetPortfolioCoinDataQuery(currentUser.uid);
 
   return (
     <section className="lg:px-4 py-2 lg:py-8  max-w-[1600px]">
@@ -129,7 +130,7 @@ const UserProfile = () => {
             <div className="pt-1">
               <h1 className="">Account Balance</h1>
               <p className="font-medium tracking-more-wider">
-                ${fetchAvailableUsdCoinsSuccess && availableUsdCoins[0]?.amount}
+                ${fetchAvailableUsdCoinsSuccess && availableUsdCoins?.amount}
               </p>
             </div>
             <div className="pt-6 pr-6">
@@ -137,7 +138,7 @@ const UserProfile = () => {
                 <div className="">
                   <h1 className="font-light text-xs">Networth</h1>
                   <p className="font-medium tracking-wider text-sm">
-                    {userNetworthSuccess && <span>${userNetworth}</span>}
+                    {userNetworthSuccess && <span>${userNetworth.networth}</span>}
                   </p>
                 </div>
                 {/* <div className="">
@@ -184,29 +185,41 @@ const UserProfile = () => {
               </div>
             ) : (
               fetchWatchlistSuccess &&
-              watchlistData.slice(0, 7).map((coin, index) => (
+              watchlistData.slice(0, 7).map((stock, index) => (
                 <li className="font-text flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
                   <div className="flex items-center justify-start text-sm space-x-3">
-                    <img src={coin.image.large} alt={`${coin.name}`} className="w-10 h-10" />
+                    {/* <img src={coin.image.large} alt={`${coin.name}`} className="w-10 h-10" /> */}
                     <div className="">
-                      <p className="text-white text-xl font-bold ">{coin.name}</p>
-                      <p className="text-white text-sm uppercase">{coin.symbol}</p>
+                      <p className="text-white text-xl font-bold ">
+                        {stock?.displayName ? stock?.displayName : stock?.shortName}
+                      </p>
+                      <p className="text-white text-sm uppercase">{stock?.symbol}</p>
                     </div>
                   </div>
                   <div className="">
                     <p className="text-white font-semibold">
-                      ${coin.market_data.current_price.usd}
+                      {stock?.preMarketPrice ? stock?.preMarketPrice : stock?.regularMarketPrice}{" "}
+                      {stock?.currency}
                       <br />
                     </p>
                     <p
                       className={`text-right ${
-                        coin?.market_data.price_change_percentage_24h >= 0
+                        stock?.preMarketChangePercent
+                          ? stock?.preMarketChangePercent >= 0
+                            ? "text-green-400"
+                            : "text-red-400"
+                          : stock?.regularMarketChange >= 0
                           ? "text-green-400"
                           : "text-red-400"
                       } font-semibold`}
                     >
-                      {coin?.market_data.price_change_percentage_24h >= 0 && "+"}
-                      {coin?.market_data.price_change_percentage_24h?.toFixed(2)}%
+                      {stock?.preMarketChangePercent
+                        ? stock?.preMarketChangePercent >= 0 && "+"
+                        : stock?.regularMarketChange >= 0 && "+"}
+                      {stock?.preMarketChangePercent
+                        ? stock?.preMarketChangePercent.toFixed(3)
+                        : stock?.regularMarketChange.toFixed(3)}
+                      %
                     </p>
                   </div>
                 </li>
@@ -238,21 +251,26 @@ const UserProfile = () => {
               </div>
             ) : (
               isSuccess &&
-              portfolioData.slice(0, 7).map((coin, index) => (
+              portfolioData.slice(0, 7).map((stock, index) => (
                 <li className="flex items-center font-text text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
                   <div className="flex items-center justify-start text-sm space-x-3">
-                    <img src={coin.image} alt={`${coin.coinName}`} className="w-10 h-10" />
+                    {/* <img src={coin.image} alt={`${coin.coinName}`} className="w-10 h-10" /> */}
                     <div className="">
-                      <p className="text-white text-xl font-bold ">{coin.coinName}</p>
-                      <p className="text-white text-sm uppercase">{coin.coinSymbol}</p>
+                      <p className="text-white text-xl font-bold ">
+                        {stock?.displayName ? stock?.displayName : stock?.shortName}
+                      </p>
+                      <p className="text-white text-sm uppercase">{stock?.symbol}</p>
                     </div>
                   </div>
                   <div className="">
                     <p className="text-white font-semibold text-right">
-                      {coin.coinAmount} {coin.coinSymbol}
+                      {stock?.stockAmount} {stock.symbol}
                       <br />
                     </p>
-                    <p className="text-gray-400 font-semibold text-right">${coin.amount}</p>
+                    <p className="text-gray-400 font-semibold text-right">
+                      {stock?.preMarketPrice ? stock?.preMarketPrice : stock?.regularMarketPrice}{" "}
+                      {stock?.currency}
+                    </p>
                   </div>
                 </li>
               ))
@@ -313,7 +331,7 @@ const UserProfile = () => {
                   )}
                 </div>
                 <div className="flex items-center justify-start ml-auto md:ml-0 ">
-                  <p className="w-28 md:w-40 truncate text-white font-semibold">{user.username}</p>
+                  <p className="w-28 md:w-40 truncate text-white font-semibold">{user.name}</p>
                 </div>
                 <div className="flex items-center justify-end ml-auto md:ml-0 ">
                   <p className="w-28 md:w-40 break-all text-white font-semibold text-right">

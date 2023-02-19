@@ -17,24 +17,14 @@ const Search = () => {
       if (search) {
         try {
           setIsLoading(true);
-          // const res = await fetch(`https://api.coingecko.com/api/v3/search?query=${search}`);
+          const res = await fetch(`/api/stocks/search?search=${search}`);
 
-          // if (!res.ok) {
-          //   throw new Error("Something went wrong! Please try again");
-          // }
-
-          // const data = await res.json();
-          // setSearchData(data);
-          const res = await fetch(`/api/stocks/search?search=${search}`)
-
-          const data = await res.json()
-          console.log(data)
+          const data = await res.json();
+          console.log(data);
 
           setSearchData(data);
-          
 
           setIsLoading(false);
-
         } catch (error) {
           setError(error.message);
         }
@@ -87,24 +77,32 @@ const Search = () => {
       ) : (
         <ul className="mx-8">
           {searchData !== undefined &&
-            searchData?.quotes?.filter(stock => "shortname" in stock).map((stock, index) => (
-              <li
-                onClick={() => navigate(`/app/coin/${stock.id}`)}
-                key={index}
-                className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 cursor-pointer"
-              >
-                <div className="flex items-center justify-start text-sm space-x-3">
-                  {/* <img src={coin.large} alt={`${coin.name}`} className="w-7 h-7" /> */}
-                  <div className="">
-                    <p className="text-white text-md font-bold ">{stock.shortname}</p>
-                    <p className="text-white text-xs">{stock.symbol}</p>
+            searchData?.quotes
+              ?.filter((stock) => "shortname" in stock)
+              .map((stock, index) => (
+                <li
+                  onClick={() =>
+                    navigate(`/app/coin/${stock.symbol}`, {
+                      state: {
+                        news: searchData?.news
+                      }
+                    })
+                  }
+                  key={index}
+                  className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 cursor-pointer"
+                >
+                  <div className="flex items-center justify-start text-sm space-x-3">
+                    {/* <img src={coin.large} alt={`${coin.name}`} className="w-7 h-7" /> */}
+                    <div className="">
+                      <p className="text-white text-md font-bold ">{stock.shortname}</p>
+                      <p className="text-white text-xs">{stock.symbol}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="">
-                  <p className="text-white font-medium">Score: {stock.score}</p>
-                </div>
-              </li>
-            ))}
+                  <div className="">
+                    <p className="text-white font-medium">Score: {stock.score}</p>
+                  </div>
+                </li>
+              ))}
         </ul>
       )}
     </section>

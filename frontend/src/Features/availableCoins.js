@@ -14,17 +14,14 @@ export const fetchAvailableCoins = createAsyncThunk(
   "availableCoins/fetchAvailableCoin",
   async (id) => {
     // get available coins
-    let { data: availableUsdCoin, error } = await supabase
-      .from("portfolio")
-      .select("coinId,coinName,amount")
-      .eq("userId", `${id}`)
-      .eq("coinId", "USD");
+    const res = await fetch(`/api/user/vusd?id=${id}`);
 
-    if (error) {
-      throw new Error("Something went wrong");
+    if (!res.ok) {
+      throw new Error(`Something went wrong!`);
     }
 
-    return availableUsdCoin[0];
+    const data = await res.json();
+    return data;
   }
 );
 

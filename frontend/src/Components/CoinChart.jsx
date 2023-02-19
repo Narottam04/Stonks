@@ -3,18 +3,18 @@ import { CrosshairMode, createChart } from "lightweight-charts";
 
 import dayjs from "dayjs";
 
-export const TradingChart = ({ id, data, days }) => {
+export const TradingChart = ({ id, data, days, currency }) => {
   const chartContainerRef = useRef();
 
   useEffect(() => {
     // console.log("days", data);
     const localChartData = data.map((price) => {
       return {
-        time: price[0] / 1000,
-        open: price[1],
-        high: price[2],
-        low: price[3],
-        close: price[4]
+        time: dayjs(price?.date).format("YYYY/MM/DD"),
+        open: price?.open,
+        high: price?.high,
+        low: price?.low,
+        close: price?.close
       };
     });
 
@@ -37,22 +37,22 @@ export const TradingChart = ({ id, data, days }) => {
           color: "#0f172a"
         }
       },
-      timeScale: {
-        tickMarkFormatter: (time) => {
-          if (days === "1") {
-            return dayjs.unix(time).format("hh:mm");
-          }
-          if (days === "30") {
-            return dayjs.unix(time).format("D-MMM");
-          }
-          if (days === "90") {
-            return dayjs.unix(time).format("D-MMM");
-          }
-          if (days === "365") {
-            return dayjs.unix(time).format("DD-MMM");
-          }
-        }
-      },
+      // timeScale: {
+      //   tickMarkFormatter: (time) => {
+      //     if (days === "1") {
+      //       return dayjs(time).format("hh:mm");
+      //     }
+      //     if (days === "30") {
+      //       return dayjs(time).format("D-MMM");
+      //     }
+      //     if (days === "90") {
+      //       return dayjs(time).format("D-MMM");
+      //     }
+      //     if (days === "365") {
+      //       return dayjs(time).format("DD-MM");
+      //     }
+      //   }
+      // },
       width: window.innerWidth > 1024 ? window.innerWidth - 320 : window.innerWidth - 30,
       height: 600,
       crosshair: {
@@ -90,15 +90,15 @@ export const TradingChart = ({ id, data, days }) => {
   );
 };
 
-export const LineChart = ({ id, data, days, name }) => {
+export const LineChart = ({ id, data, days, name, currency }) => {
   const chartContainerRef = useRef();
   const toolTipRef = useRef();
 
   useEffect(() => {
     const localChartData = data.map((price) => {
       return {
-        time: price[0] / 1000,
-        value: price[4]
+        time: dayjs(price?.date).format("YYYY/MM/DD"),
+        value: price?.open
       };
     });
 
@@ -131,23 +131,23 @@ export const LineChart = ({ id, data, days, name }) => {
           visible: false
         }
       },
-      timeScale: {
-        tickMarkFormatter: (time) => {
-          if (days === "1") {
-            return dayjs.unix(time).format("hh:mm");
-          }
-          if (days === "30") {
-            return dayjs.unix(time).format("D-MMM");
-          }
-          if (days === "90") {
-            return dayjs.unix(time).format("D-MMM");
-          }
-          if (days === "365") {
-            return dayjs.unix(time).format("DD-MMM");
-          }
-        },
-        borderVisible: false
-      },
+      // timeScale: {
+      //   tickMarkFormatter: (time) => {
+      //     if (days === "1") {
+      //       return dayjs.unix(time).format("hh:mm");
+      //     }
+      //     if (days === "30") {
+      //       return dayjs.unix(time).format("D-MMM");
+      //     }
+      //     if (days === "90") {
+      //       return dayjs.unix(time).format("D-MMM");
+      //     }
+      //     if (days === "365") {
+      //       return dayjs.unix(time).format("DD-MMM");
+      //     }
+      //   },
+      //   borderVisible: false
+      // },
       crosshair: {
         horzLine: {
           visible: false,
@@ -200,8 +200,8 @@ export const LineChart = ({ id, data, days, name }) => {
       toolTipRef.current.innerHTML =
         `<div style="font-size: 24px; margin: 4px 0px; color: #ffffff">${name}</div>` +
         '<div style="font-size: 22px; margin: 4px 0px; color: #ffffff">' +
-        "$" +
         localChartData[data.length - 1].value +
+        ` ${currency}` +
         "</div>" +
         '<div style="font-size: 22px; margin: 4px 0px; color: #ffffff">' +
         dateStr +
@@ -221,13 +221,14 @@ export const LineChart = ({ id, data, days, name }) => {
       ) {
         setLastBarText();
       } else {
-        let dateStr = dayjs.unix(param?.time).format("YYYY-MM-DD");
+        console.log(param?.time);
+        let dateStr = `${param?.time?.year}-${param?.time?.month}-${param?.time?.day}`;
         var price = param.seriesPrices.get(newSeries);
         toolTipRef.current.innerHTML =
           `<div style="font-size: 24px; margin: 4px 0px; color: #ffffff">${name}</div>` +
           '<div style="font-size: 22px; margin: 4px 0px; color: #ffffff">' +
-          "$" +
-          price +
+          price.toFixed(3) +
+          ` ${currency}` +
           "</div>" +
           '<div style="font-size: 22px; margin: 4px 0px; color: #ffffff">' +
           dateStr +

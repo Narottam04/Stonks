@@ -52,16 +52,35 @@ function Signup() {
       const response = await signUp(email, password);
       await updateProfileName(username);
 
+      console.log(response, "added user to firebase");
       const { isNewUser } = getAdditionalUserInfo(response);
       if (isNewUser) {
         // add user data with networth on database
-        const { error } = await supabase.from("users").insert([
-          {
-            userId: response.user.uid,
-            username,
+        // const { error } = await supabase.from("users").insert([
+        //   {
+        //     userId: response.user.uid,
+        //     username,
+        //     email
+        //   }
+        // ]);
+
+        const addUser = await fetch("/api/user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            id: response.user.uid,
+            name: username,
             email
-          }
-        ]);
+          })
+        });
+
+        console.log(addUser, "added user to database");
+
+        if (!addUser.ok) {
+          throw new Error(addUser);
+        }
 
         // if(error){
         //     console.log(error)
@@ -70,16 +89,31 @@ function Signup() {
         // }
 
         // give 100k coins to user
-        const { error: addToPortfolioError } = await supabase.from("portfolio").insert([
-          {
-            userId: response.user.uid,
-            coinId: "USD",
-            coinName: "Virtual USD",
-            image: "https://img.icons8.com/fluency/96/000000/us-dollar-circled.png",
-            amount: 100000,
-            coinSymbol: "vusd"
-          }
-        ]);
+        // const { error: addToPortfolioError } = await supabase.from("portfolio").insert([
+        //   {
+        //     userId: response.user.uid,
+        //     coinId: "USD",
+        //     coinName: "Virtual USD",
+        //     image: "https://img.icons8.com/fluency/96/000000/us-dollar-circled.png",
+        //     amount: 100000,
+        //     coinSymbol: "vusd"
+        //   }
+        // ]);
+        const addVirtualUsd = await fetch("/api/user/addCoin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: response.user.uid
+          })
+        });
+
+        console.log(addUser, "added 100k to portfolio");
+
+        if (!addVirtualUsd.ok) {
+          throw new Error(addVirtualUsd);
+        }
       }
 
       if (response.user) {

@@ -1,18 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import usd from "../Assets/svg/USD.svg";
 
-const CoinStats = ({ data }) => {
+const CoinStats = ({ data, stockData, currencyRates, news }) => {
   const [coinValue, setCoinValue] = useState(1);
-  const [coinUsdPrice, setCoinUsdPrice] = useState(data.market_data.current_price.usd);
+
+  const currencyConverter = (amount, usdValueOfAmount) => {
+    const usdEquivalent = amount / usdValueOfAmount;
+    return usdEquivalent.toFixed(2);
+  };
+
+  const [coinUsdPrice, setCoinUsdPrice] = useState(() =>
+    currencyConverter(
+      data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice,
+      currencyRates.rates[data?.currency]
+    )
+  );
 
   const changeCoinValue = (e) => {
     setCoinValue(e.target.value);
-    setCoinUsdPrice(data.market_data.current_price.usd * e.target.value);
-  };
+    // console.log(e.target.value.isInteger());
+    const numOfStocks = e.target.value;
+    const oneStockAmount = data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice;
+    const oneUsdEquivalent = currencyRates.rates[data?.currency];
 
-  const changeUsdValue = (e) => {
-    setCoinUsdPrice(e.target.value);
-    setCoinValue(e.target.value / data.market_data.current_price.usd);
+    const oneStockInUsd = currencyConverter(oneStockAmount, oneUsdEquivalent);
+    // const usdAmount = currencyConverter
+    setCoinUsdPrice(oneStockInUsd * numOfStocks);
   };
 
   return (
@@ -24,10 +37,12 @@ const CoinStats = ({ data }) => {
       <div className="flex  flex-col xl:flex-row items-center">
         <div className="w-[90vw] md:w-1/2 mx-2 md:mx-4 flex space-x-4 justify-between p-2 border-2 border-white rounded-lg">
           <div className="flex items-center space-x-2">
-            <img src={data?.image?.small} className="" alt={data.name} />
+            {/* <img src={data?.image?.small} className="" alt={data.name} /> */}
             <div>
-              <p className="text-white font-title text-xl font-bold">{data.name}</p>
-              <p className="text-gray-300  uppercase font-semibold">{data.symbol}</p>
+              <p className="text-white font-title text-xl font-bold">
+                {stockData?.displayName ? stockData?.displayName : stockData?.shortName}
+              </p>
+              <p className="text-gray-300  uppercase font-semibold">{stockData?.symbol}</p>
             </div>
           </div>
           <div className="mx-2">
@@ -60,6 +75,7 @@ const CoinStats = ({ data }) => {
             </svg>
           </div>
         </div>
+
         <div className="w-[90vw] md:w-1/2 mx-2 md:mx-4 flex justify-between p-2 border-2 border-white rounded-lg">
           <div className="flex items-center space-x-2">
             <img src={usd} width="40" height="45" className="" alt={data.name} />
@@ -75,7 +91,7 @@ const CoinStats = ({ data }) => {
               id="coinUsdValue"
               name="coinUsdValue"
               value={coinUsdPrice}
-              onChange={changeUsdValue}
+              readOnly={true}
               className="w-20 md:w-40 h-full rounded-lg text-xl  font-title focus:ring-0 text-gray-50 bg-gray-900 px-2"
             />
           </div>
@@ -84,61 +100,79 @@ const CoinStats = ({ data }) => {
       {/* coin Description */}
 
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2  mt-8">
-        <div className="mx-8">
-          <h2 className="text-2xl md:text-3xl text-white font-title font-semibold mt-3 mb-2">
-            <span className="uppercase">{data.symbol}</span> Price Live Data
-          </h2>
-          <p className="text-gray-200 text-lg ">
-            The live {data.name} price today is ${data.market_data.current_price.usd} USD. We update
-            our <span className="uppercase">{data.symbol}</span> to USD price in real-time.{" "}
-            {data.name} is
-            <span
-              className={`font-bold  ${
-                data?.market_data.price_change_percentage_24h >= 0
-                  ? "text-green-400"
-                  : "text-red-400"
-              } px-1`}
-            >
-              {data?.market_data.price_change_percentage_24h >= 0 && "+"}
-              {data.market_data.price_change_percentage_24h.toFixed(3)}%
-            </span>
-            in the last 24 hours. The current market cap ranking is #
-            {data.market_data.market_cap_rank}, with a live market cap of $
-            {data.market_data.market_cap.usd} USD. It has a circulating supply of{" "}
-            {data.market_data.circulating_supply} <span className="uppercase">{data.symbol}</span>{" "}
-            coins.
-          </p>
-        </div>
-
         <div className=" shadow-lg mx-auto rounded-2xl bg-black w-[90%]">
           <p className="font-bold text-2xl md:text-3xl py-4  text-black dark:text-white">
-            {data.name} Statistics
+            {stockData?.displayName ? stockData?.displayName : stockData?.shortName} Statistics
           </p>
           <ul>
             <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
               <div className="flex items-center justify-start text-sm">
-                <span className="text-xl">Price To USD</span>
+                <span className="text-xl">Exchange</span>
               </div>
               <div>
-                <p className="text-xl">${data.market_data.current_price.usd}</p>
+                <p className="text-xl">{stockData?.exchange}</p>
               </div>
             </li>
 
             <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
               <div className="flex items-center justify-start text-sm">
-                <span className="text-xl">Rank</span>
+                <span className="text-xl">Regular Market Price</span>
               </div>
               <div>
-                <p className="text-xl">#{data.market_cap_rank}</p>
+                <p className="text-xl">
+                  {stockData?.preMarketPrice
+                    ? stockData?.preMarketPrice
+                    : stockData?.regularMarketPrice}{" "}
+                  {stockData?.currency}
+                </p>
+              </div>
+            </li>
+            <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
+              <div className="flex items-center justify-start text-sm">
+                <span className="text-xl">Regular Market High</span>
+              </div>
+              <div>
+                <p className="text-xl">
+                  {stockData?.regularMarketDayLow && stockData?.regularMarketDayHigh}{" "}
+                  {stockData?.currency}
+                </p>
+              </div>
+            </li>
+            <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
+              <div className="flex items-center justify-start text-sm">
+                <span className="text-xl">Regular Market Low</span>
+              </div>
+              <div>
+                <p className="text-xl">
+                  {stockData?.regularMarketDayLow && stockData?.regularMarketDayLow}{" "}
+                  {stockData?.currency}
+                </p>
               </div>
             </li>
 
             <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
               <div className="flex items-center justify-start text-sm">
-                <span className="text-xl">Total Volume</span>
+                <span className="text-xl">Regular Market Change</span>
               </div>
               <div>
-                <p className="text-xl">${data.market_data.total_volume.usd}</p>
+                <p
+                  className={`text-xl text-left font-bold my-2 ${
+                    stockData?.regularMarketChange >= 0 ? "text-green-400" : "text-red-400"
+                  } `}
+                >
+                  {stockData?.regularMarketChange && stockData?.regularMarketChange.toFixed(3)}%
+                </p>
+              </div>
+            </li>
+
+            <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
+              <div className="flex items-center justify-start text-sm">
+                <span className="text-xl">Market Volume</span>
+              </div>
+              <div>
+                <p className="text-xl">
+                  {stockData?.regularMarketVolume && stockData?.regularMarketVolume}
+                </p>
               </div>
             </li>
 
@@ -147,31 +181,78 @@ const CoinStats = ({ data }) => {
                 <span className="text-xl">Market Cap</span>
               </div>
               <div>
-                <p className="text-xl">${data.market_data.market_cap.usd}</p>
+                <p className="text-xl">${stockData.marketCap}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div className=" shadow-lg mx-auto rounded-2xl bg-black w-[90%]">
+          <p className="font-bold text-2xl md:text-3xl py-4  text-black dark:text-white">
+            {stockData?.displayName ? stockData?.displayName : stockData?.shortName} Percentage
+            Change
+          </p>
+          <ul>
+            {/*  */}
+            <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
+              <div className="flex items-center justify-start text-sm">
+                <span className="text-xl">50 Days</span>
+              </div>
+              <div>
+                <p
+                  className={`text-xl text-left font-bold my-2 ${
+                    stockData?.fiftyDayAverageChangePercent >= 0 ? "text-green-400" : "text-red-400"
+                  } `}
+                >
+                  {stockData?.fiftyDayAverageChangePercent &&
+                    stockData?.fiftyDayAverageChangePercent.toFixed(3)}
+                  %
+                </p>
               </div>
             </li>
 
             <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
               <div className="flex items-center justify-start text-sm">
-                <span className="text-xl">All Time High</span>
+                <span className="text-xl">200 Days</span>
               </div>
               <div>
-                <p className="text-xl">${data.market_data.ath.usd}</p>
+                <p
+                  className={`text-xl text-left font-bold my-2 ${
+                    stockData?.twoHundredDayAverageChangePercent >= 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  } `}
+                >
+                  {stockData?.twoHundredDayAverageChangePercent &&
+                    stockData?.twoHundredDayAverageChangePercent.toFixed(3)}
+                  %
+                </p>
               </div>
             </li>
 
             <li className="flex items-center text-gray-200 justify-between py-3 border-b-2 border-gray-800 ">
               <div className="flex items-center justify-start text-sm">
-                <span className="text-xl">Circulating Supply</span>
+                <span className="text-xl">52 Week </span>
               </div>
               <div>
-                <p className="text-xl">{data.market_data.circulating_supply}</p>
+                <p
+                  className={`text-xl text-left font-bold my-2 ${
+                    stockData?.fiftyTwoWeekHighChangePercent >= 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  } `}
+                >
+                  {stockData?.fiftyTwoWeekHighChangePercent &&
+                    stockData?.fiftyTwoWeekHighChangePercent.toFixed(3)}
+                  %
+                </p>
               </div>
             </li>
           </ul>
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2  mt-8">
+
+      {/* <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2  mt-8">
         <div className=" shadow-lg mx-auto rounded-2xl bg-black w-[90%]">
           <p className="font-bold text-2xl md:text-3xl py-4  text-black dark:text-white">
             {data.name} Social Media Stats
@@ -369,10 +450,10 @@ const CoinStats = ({ data }) => {
             </li>
           </ul>
         </div>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2  mt-8">
-        <div className=" shadow-lg mx-auto rounded-2xl bg-black w-[90%]">
+        {/* <div className=" shadow-lg mx-auto rounded-2xl bg-black w-[90%]">
           <p className="font-bold text-2xl md:text-3xl py-4  text-black dark:text-white">
             {data.name} Percentage Change
           </p>
@@ -503,8 +584,55 @@ const CoinStats = ({ data }) => {
               </div>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
+      {news !== "undefined" && (
+        <section className="px-4 lg:px-4 py-2 lg:py-8 mx-auto max-w-[1600px]">
+          <h2 className="mt-4 lg:mt-0 mb-8 text-2xl md:text-3xl font-extrabold leading-tight text-white font-title">
+            {stockData?.displayName ? stockData?.displayName : stockData?.shortName} News
+          </h2>
+
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            {news?.length > 0 &&
+              news?.map((news) => (
+                <a
+                  className="relative block p-8 overflow-hidden border border-gray-100 rounded-lg"
+                  href={news.link}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <span className="absolute inset-x-0 bottom-0 h-2  bg-gradient-to-r from-green-300 via-blue-500 to-purple-600"></span>
+
+                  <div className="justify-between sm:flex font-title">
+                    <div>
+                      <h5 className="text-lg font-bold text-white">{news.title}</h5>
+                      <p className="mt-1 text-xs font-medium text-gray-300">By {news.publisher}</p>
+                    </div>
+
+                    {/* <div className="flex-shrink-0 hidden ml-3 sm:block">
+                      <img
+                        className="object-cover w-16 h-16 rounded-lg shadow-sm"
+                        src={news?.image?.thumbnail?.contentUrl}
+                        alt="News cover"
+                      />
+                    </div> */}
+                  </div>
+
+                  {/* <div className="mt-4 sm:pr-8 font-text">
+                    <p className="text-sm text-gray-400 line-clamp-4">{news.description}</p>
+                  </div> */}
+
+                  <dl className="flex mt-6">
+                    <div className="flex flex-col-reverse">
+                      <dt className="text-sm font-medium text-gray-500">Published</dt>
+                      <dd className="text-xs text-gray-500">{news.providerPublishTime}</dd>
+                    </div>
+                  </dl>
+                </a>
+              ))}
+          </div>
+        </section>
+      )}
     </>
   );
 };

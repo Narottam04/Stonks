@@ -18,20 +18,17 @@ import { useGetWatchlistDataQuery } from "../services/supabaseApi";
 
 import Loader from "../Components/Loader";
 
-const trailingActions = (coinId, userId, refetch) => {
+const trailingActions = (watchlistId,symbol, userId, refetch) => {
   async function handleDelete() {
     try {
-      const {
-        // data,
-        error
-      } = await supabase
-        .from("watchlist")
-        .delete()
-        .eq("coinId", `${coinId}`)
-        .eq("userId", `${userId}`);
-      if (error) {
-        throw new Error(error);
+      const delWatchlist = await fetch(`/api/user/watchlist?watchlistId=${watchlistId}`,{
+        method:"DELETE"
+      })
+      console.log(delWatchlist)
+      if (!delWatchlist.ok) {
+        throw new Error(`Something went wrong!`);
       }
+
     } catch (error) {
       console.log(error);
     }
@@ -45,7 +42,7 @@ const trailingActions = (coinId, userId, refetch) => {
         Delete
       </SwipeAction>
       <SwipeAction>
-        <Link to={`/app/coin/${coinId}`} className="bg-blue-500 py-5 px-3  text-white font-bold">
+        <Link to={`/app/coin/${symbol}`} className="bg-blue-500 py-5 px-3  text-white font-bold">
           View
         </Link>
       </SwipeAction>
@@ -113,10 +110,10 @@ const Watchlist = () => {
             Press the button to browse all the coins
           </p>
           <Link
-            to="/app/market"
+            to="/app/search"
             className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300  font-medium rounded-lg text-sm px-5 py-2.5 text-center "
           >
-            View Coins
+            Search Coins
           </Link>
         </div>
       )}
@@ -143,62 +140,83 @@ const Watchlist = () => {
           </li>
           {isSuccess &&
             watchlistData.length !== 0 &&
-            watchlistData.map((coin, index) => (
+            watchlistData.map((stock, index) => (
               <SwipeableListItem
-                trailingActions={trailingActions(coin.id, currentUser.uid, refetch)}
+                trailingActions={trailingActions(stock?.watchlistId, stock?.symbol, currentUser.uid, refetch)}
                 key={index}
               >
                 <div className="grid grid-cols-2 md:grid-cols-4 text-gray-500 py-2 px-1md:px-5 hover:bg-gray-900 rounded-lg cursor-pointer border-b-2 border-gray-800 xl:w-full">
                   <div className="flex items-center space-x-2 ">
-                    <p className="pl-1">{index + 1}</p>
-                    <img
+                    <p className="px-1">{index + 1}</p>
+                    {/* <img
                       className="h-8 w-8 md:h-10 md:w-10 object-contain"
                       src={coin.image.small}
                       alt="cryptocurrency"
                       loading="lazy"
-                    />
+                    /> */}
                     <div>
                       <p className=" w-64 truncate text-white break-words font-semibold">
-                        {coin.name}
+                        {stock?.displayName ? stock?.displayName : stock?.shortName}
                       </p>
                       <div className="flex space-x-1">
-                        <p>{coin.symbol}</p>
+                        <p>{stock?.symbol}</p>
                         <p
                           className={`md:hidden w-24 md:w-40 ${
-                            coin?.market_data.price_change_percentage_24h >= 0
+                            stock?.preMarketChangePercent
+                              ? stock?.preMarketChangePercent >= 0
+                                ? "text-green-400"
+                                : "text-red-400"
+                              : stock?.regularMarketChange >= 0
                               ? "text-green-400"
                               : "text-red-400"
                           } font-semibold`}
                         >
-                          {coin?.market_data.price_change_percentage_24h >= 0 && "+"}
-                          {coin?.market_data.price_change_percentage_24h?.toFixed(2)}%
+                          {stock?.preMarketChangePercent
+                            ? stock?.preMarketChangePercent >= 0 && "+"
+                            : stock?.regularMarketChange >= 0 && "+"}
+                          {stock?.preMarketChangePercent
+                            ? stock?.preMarketChangePercent.toFixed(3)
+                            : stock?.regularMarketChange.toFixed(3)}
+                          %
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center justify-end ml-auto md:ml-0 ">
                     <p className="w-28 md:w-40 text-white font-semibold">
-                      ${coin?.market_data.current_price.usd}
+                      {stock?.preMarketPrice ? stock?.preMarketPrice : stock?.regularMarketPrice}{" "}
+                      {stock?.currency}
                       <br />
                       <span className="md:hidden w-28 md:w-40 text-gray-500">
-                        MCap: {normalizeMarketCap(coin?.market_data.market_cap.usd)}
+                        MCap: {normalizeMarketCap(stock?.regularMarketVolume)}
                       </span>
                     </p>
                   </div>
                   <div className="hidden md:flex items-center justify-end ml-auto md:ml-0 ">
                     <p
                       className={`w-24 md:w-40 ${
-                        coin?.market_data.price_change_percentage_24h >= 0
+                        stock?.preMarketChangePercent
+                          ? stock?.preMarketChangePercent >= 0
+                            ? "text-green-400"
+                            : "text-red-400"
+                          : stock?.regularMarketChange >= 0
                           ? "text-green-400"
                           : "text-red-400"
                       } font-semibold`}
                     >
-                      {coin?.market_data.price_change_percentage_24h >= 0 && "+"}
-                      {coin?.market_data.price_change_percentage_24h?.toFixed(2)}%
+                      {stock?.preMarketChangePercent
+                        ? stock?.preMarketChangePercent >= 0 && "+"
+                        : stock?.regularMarketChange >= 0 && "+"}
+                      {stock?.preMarketChangePercent
+                        ? stock?.preMarketChangePercent.toFixed(3)
+                        : stock?.regularMarketChange.toFixed(3)}
+                      %
                     </p>
                   </div>
                   <div className="hidden md:flex items-center justify-end ml-auto md:ml-0 ">
-                    <p className="w-24 md:w-40  ">${coin?.market_data.market_cap.usd}</p>
+                    <p className="w-24 md:w-40  ">
+                      {normalizeMarketCap(stock?.regularMarketVolume)}
+                    </p>
                   </div>
                 </div>
               </SwipeableListItem>
