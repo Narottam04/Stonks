@@ -1,11 +1,11 @@
-import logo from "../Assets/svg/cryptocademy-logo-sideways-light.svg";
+import logo from "../Assets/svg/stonks-logo-sideways-light.svg";
 
 const FormAppInfo = () => {
   return (
     <>
       <div className="hidden md:block  px-4  bg-gradient-to-b from-black to-gray-900 text-white xl:py-20 md:px-40 lg:px-20 xl:px-40">
         {/* logo */}
-        <img src={logo} className="w-3/4 translate-x-[-10%] " alt="cryptocademy logo" />
+        <img src={logo} className="w-3/4 translate-x-[-10%] " alt="Stonks logo" />
 
         <div className="flex space-x-3 mb-8 ">
           <svg
@@ -25,9 +25,9 @@ const FormAppInfo = () => {
               Discover the future of digital finance.
             </h2>
             <p className="font-text mt-3  text-gray-300">
-              Cryptocademy provides a real-time, risk-free trading simulator that allows you to
-              msater crypto trading and investing at zero cost. Hone your skills and feel confident
-              with crypto trading and investing.
+              Stonks provides a real-time, risk-free trading simulator that allows you to
+              msater stock trading and investing at zero cost. Hone your skills and feel confident
+              with stock trading and investing.
             </p>
           </div>
         </div>
@@ -50,7 +50,7 @@ const FormAppInfo = () => {
             </h2>
             <p className="font-text mt-3 text-gray-300">
               You decide how to utilize mock $100000 virutal USD! Buy, sell, trade, and profit.
-              Learn how to become a savvy investor with cryptocademy.
+              Learn how to become a savvy investor with Stonks.
             </p>
           </div>
         </div>

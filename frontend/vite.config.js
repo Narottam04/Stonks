@@ -8,10 +8,12 @@ dns.setDefaultResultOrder('verbatim')
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), eslint(), viteCompression()],
+  plugins: [react(), eslint(),  
+    viteCompression()
+  ],
   server: {
     proxy: {
-      '/api':"http://localhost:8000",    
+      '/api':"http://170.187.238.118",    
     },
   },
 });

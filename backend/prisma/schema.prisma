@@ -14,7 +14,7 @@ model User {
   id        String      @id @unique
   name      String
   email     String      @unique
-  networth  Int         @default(100000)
+  networth  Float       @default(100000)
   Watchlist Watchlist[]
   Portfolio Portfolio[]
 }

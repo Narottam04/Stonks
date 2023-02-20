@@ -42,7 +42,7 @@ const CurrencyDetailsPage = () => {
   const [toggleBuyCoinsModal, setToggleBuyCoinsModal] = useState(false);
   const [toggleSellCoinsModal, setToggleSellCoinsModal] = useState(false);
 
-  const { data, error, isLoading, isSuccess } = useGetStockDataQuery(id);
+  const { data, error, isLoading, isSuccess, refetch } = useGetStockDataQuery(id);
 
   const { data: currencyConversions, isLoading: currencyConversionLoading } =
     useGetCurrencyConversionsQuery();
@@ -57,6 +57,20 @@ const CurrencyDetailsPage = () => {
     startDate,
     endDate: dayjs(Date.now()).format("YYYY-MM-DD")
   });
+
+  useEffect(() => {
+    const refetchInterval = setInterval(() => {
+      if(data?.marketState && data?.marketState !=="CLOSED"){
+        console.log("refetching market prices")
+        refetch()
+      }else{
+        console.log("MARKET IS CLOSED")
+      }
+    }, 10000);
+
+    return () => clearInterval(refetchInterval)
+  }, [])
+  
 
   useEffect(() => {
     if (error || fetchChartDataError) {
@@ -150,7 +164,7 @@ const CurrencyDetailsPage = () => {
         <div className="mt-6 mx-2 md:mx-4 max-w-[1600px]">
           {/* back button */}
           <Link
-            to="/app/market"
+            to="/app/"
             className="md:hidden border-2 border-white w-10 h-10 rounded-full flex justify-center items-center mb-2 "
           >
             <svg
@@ -187,7 +201,7 @@ const CurrencyDetailsPage = () => {
                 </div>
                 <div className="flex flex-col justify-start">
                   <p className=" text-lg text-left md:text-2xl text-white font-bold my-2">
-                    {data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice}{" "}
+                    {data?.regularMarketPrice && data?.regularMarketPrice}{" "}
                     {data?.currency}
                   </p>
                 </div>

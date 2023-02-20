@@ -11,7 +11,7 @@ import {
 } from "react-icons/ai";
 import { BsFillBarChartFill } from "react-icons/bs";
 
-import logo from "../Assets/svg/cryptocademy-logo-sideways-light.svg";
+import logo from "../Assets/svg/stonks-logo-sideways-light.svg";
 
 import { useAuth } from "../Context/AuthContext";
 

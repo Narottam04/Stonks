@@ -46,7 +46,22 @@ const Portfolio = () => {
   } = useGetPortfolioCoinDataQuery(currentUser.uid);
   // , { pollingInterval: 5000 }
 
-  console.log(portfolioCoinData);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const openMarket = portfolioCoinData?.filter(stock => stock?.marketState !=="CLOSED")  
+      if(openMarket?.length !== 0){
+        console.log("updating portfolio prices")
+        refetchPortfolioCoinData()
+      }else{
+        console.log("All markets are closed")
+      }
+    }, 10000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   // get available coins
   const {

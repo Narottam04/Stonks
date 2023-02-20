@@ -192,7 +192,7 @@ const SellCoins = ({ data, modal, setModal }) => {
           <div className="px-6 py-3 md:p-6">
             <p className="text-base leading-relaxed font-semibold text-gray-200">
               1 <span className="uppercase">{data.symbol}</span> ={" "}
-              {data?.preMarketPrice ? data?.preMarketPrice : data?.regularMarketPrice}{" "}
+              {data?.regularMarketPrice && data?.regularMarketPrice}{" "}
               {data?.currency}
             </p>
 

@@ -63,7 +63,7 @@ const Search = () => {
             type="text"
             id="table-search"
             className=" border w-full   text-sm rounded-lg  block  pl-10 p-2.5  bg-black border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search for Cryptocurrency..."
+            placeholder="Search for Stocks..."
             onChange={(e) => {
               setSearch(e.target.value);
             }}

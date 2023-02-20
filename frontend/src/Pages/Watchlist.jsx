@@ -64,7 +64,14 @@ const Watchlist = () => {
   } = useGetWatchlistDataQuery(currentUser.uid);
 
   useEffect(() => {
-    const interval = setInterval(() => refetch(), 2000);
+    const interval = setInterval(() => {
+      const openMarket = watchlistData?.filter(stock => stock?.marketState !=="CLOSED")  
+      if(openMarket?.length !== 0){
+        refetch()
+      }else{
+        console.log("All markets are closed")
+      }
+    }, 10000);
 
     return () => {
       clearInterval(interval);

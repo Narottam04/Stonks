@@ -53,6 +53,7 @@ function Signup() {
       await updateProfileName(username);
 
       console.log(response, "added user to firebase");
+      let userNetworth, availableCoins;
       const { isNewUser } = getAdditionalUserInfo(response);
       if (isNewUser) {
         // add user data with networth on database
@@ -75,6 +76,8 @@ function Signup() {
             email
           })
         });
+
+        const addUserRes = await addUser.json()
 
         console.log(addUser, "added user to database");
 
@@ -108,17 +111,26 @@ function Signup() {
             userId: response.user.uid
           })
         });
+        const addUsdRes = await addVirtualUsd.json()
+
 
         console.log(addUser, "added 100k to portfolio");
 
         if (!addVirtualUsd.ok) {
           throw new Error(addVirtualUsd);
         }
+        userNetworth = addUserRes;
+        availableCoins = addUsdRes;
       }
 
       if (response.user) {
         console.log("created user successfully");
-        navigate("/");
+        navigate("/",{
+          state: {
+            userNetworth,
+            availableCoins
+          }
+        });
       }
     } catch (error) {
       setErrorMessage(error.message);
