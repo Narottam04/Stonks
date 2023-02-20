@@ -79,8 +79,6 @@ function Signup() {
 
         const addUserRes = await addUser.json()
 
-        console.log(addUser, "added user to database");
-
         if (!addUser.ok) {
           throw new Error(addUser);
         }
@@ -114,18 +112,17 @@ function Signup() {
         const addUsdRes = await addVirtualUsd.json()
 
 
-        console.log(addUser, "added 100k to portfolio");
-
         if (!addVirtualUsd.ok) {
           throw new Error(addVirtualUsd);
         }
         userNetworth = addUserRes;
         availableCoins = addUsdRes;
+        console.log(userNetworth,availableCoins)
       }
 
-      if (response.user) {
+      if (response.user && userNetworth && availableCoins) {
         console.log("created user successfully");
-        navigate("/",{
+        navigate("/app",{
           state: {
             userNetworth,
             availableCoins

@@ -53,8 +53,8 @@ export const TradingChart = ({ id, data, days, currency }) => {
       //     }
       //   }
       // },
-      width: window.innerWidth > 1024 ? window.innerWidth - 320 : window.innerWidth - 30,
-      height: 600,
+      width: window.innerWidth > 1024 ? window.innerWidth - 320 : window.innerWidth - 40,
+      height: window.innerWidth >= 768 ? 600 : 400,
       crosshair: {
         mode: CrosshairMode.Normal
       }
@@ -110,7 +110,7 @@ export const LineChart = ({ id, data, days, name, currency }) => {
 
     const chart = createChart(chartContainerRef.current, {
       width: window.innerWidth > 1024 ? window.innerWidth - 320 : window.innerWidth - 30,
-      height: 600,
+      height: window.innerWidth >= 768 ? 600 : 400,
       layout: {
         textColor: "rgba(255, 255, 255, 0.9)",
         background: { type: "solid", color: "#000000" }

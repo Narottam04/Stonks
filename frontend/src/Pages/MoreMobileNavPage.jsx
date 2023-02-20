@@ -55,21 +55,21 @@ const MoreMobileNavPage = () => {
           <AiOutlineRight className="inline-block text-gray-200 w-5 h-5 mb-1" />
         </Link>
 
-        <Link to="/app/market/globalStats" className="px-4  flex justify-between items-center">
+        {/* <Link to="/app/market/globalStats" className="px-4  flex justify-between items-center">
           <div className="flex justify-center space-x-2 items-center cursor-pointer">
             <BsBank className="inline-block text-gray-200 w-5 h-5 " />
             <h2 className="text-xl font-semibold text-gray-200">Global Metrics</h2>
           </div>
           <AiOutlineRight className="inline-block text-gray-200 w-5 h-5 mb-1" />
-        </Link>
+        </Link> */}
 
-        <Link to="/app/learn" className="px-4  flex justify-between items-center">
+        {/* <Link to="/app/learn" className="px-4  flex justify-between items-center">
           <div className="flex justify-center space-x-2 items-center cursor-pointer">
             <HiAcademicCap className="inline-block text-gray-200 w-6 h-6 " />
             <h2 className="text-xl font-semibold text-gray-200">Learn & Earn</h2>
           </div>
           <AiOutlineRight className="inline-block text-gray-200 w-5 h-5 mb-1" />
-        </Link>
+        </Link> */}
       </div>
 
       <p className="text-white font-bold text-lg  font-title mt-4 ml-3 px-2 md:px-4">
@@ -89,7 +89,7 @@ const MoreMobileNavPage = () => {
         </a>
       </div>
 
-      <p className="text-white font-bold text-lg  font-title mt-4 ml-3 px-2 md:px-4">About</p>
+      {/* <p className="text-white font-bold text-lg  font-title mt-4 ml-3 px-2 md:px-4">About</p> */}
 
       <div className="shadow-lg rounded-2xl bg-gray-900 py-6 mx-4 mt-2 space-y-4">
         {/* <Link to="/app/news" className='px-4  flex justify-between items-center'>        
@@ -99,7 +99,7 @@ const MoreMobileNavPage = () => {
                 <AiOutlineRight className='inline-block text-gray-200 w-5 h-5 mb-1'/>
             </Link> */}
 
-        <a
+        {/* <a
           href="https://cryptocademy.webdrip.in/privacy"
           className="px-4  flex justify-between items-center"
           target="_blank"
@@ -109,7 +109,7 @@ const MoreMobileNavPage = () => {
             <h2 className="text-xl font-semibold text-gray-200">Terms & Privacy</h2>
           </div>
           <AiOutlineRight className="inline-block text-gray-200 w-5 h-5 mb-1" />
-        </a>
+        </a> */}
 
         {/* <Link to="/app/leaderboard" className='px-4  flex justify-between items-center'>        
                 <div className="flex justify-center space-x-2 items-center cursor-pointer">
@@ -120,22 +120,22 @@ const MoreMobileNavPage = () => {
 
         <RWebShare
           data={{
-            text: "The Cryptocademy app is the perfect way to learn about cryptocurrency and blockchain without any risk. With the cryptocademy simulator, you can trade and invest in crypto without spending any money. Plus, detailed candlestick charts and USD converter will help track prices and trends. And if you want to compete with others, global leaderboard will let you see how you stack up. Plus, cryptocademy has curated resources to help you learn about cryptocurrency and blockchain from scratch. And to keep you up to date, cryptocademy sends daily cryptocurrency news right to the app. So download now and start your journey to becoming a crypto expert!",
-            url: "https://cryptocademy.netlify.app/",
-            title: "Cryptocademy"
+            text: "Stonks is an app that teaches people how to trade Stocks and invest in coins like GOOGLE, AMAZON, COCA COLA etc. User can analyze market data by viewing charts, top daily stocks news. Through our curated blogs and courses,users can also learn more about stock trading concepts..",
+            url: "https://stonks-app.webdrip.in",
+            title: "Stonks"
           }}
           onClick={() => console.log("shared successfully!")}
           className="px-4  flex justify-between items-center"
         >
           <div className="flex px-4 space-x-2 items-center cursor-pointer">
             <h2 className="text-md font-semibold text-green-400">
-              Share cryptocademy app to your friends.
+              Share Stonks app to your friends.
             </h2>
           </div>
         </RWebShare>
       </div>
 
-      <p className="text-white font-bold text-lg  font-title mt-4 ml-3 px-2 md:px-4">Support</p>
+      {/* <p className="text-white font-bold text-lg  font-title mt-4 ml-3 px-2 md:px-4">Support</p>
 
       <div className="shadow-lg rounded-2xl bg-gray-900 py-6 mx-4 mt-2 space-y-4">
         <a href="mailto:webdripdev@gmail.com" className="px-4  flex justify-between items-center">
@@ -151,7 +151,7 @@ const MoreMobileNavPage = () => {
           </div>
           <AiOutlineRight className="inline-block text-gray-200 w-5 h-5 mb-1" />
         </Link>
-      </div>
+      </div> */}
     </>
   );
 };

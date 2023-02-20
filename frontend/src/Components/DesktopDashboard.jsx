@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 
 import { useAuth } from "../Context/AuthContext";
@@ -12,7 +12,7 @@ import {
   useGetWatchlistDataQuery,
   useUpdateUserNetworthQuery
 } from "../services/supabaseApi";
-
+ 
 import Loader from "./Loader";
 
 const DesktopDashboard = () => {
@@ -39,9 +39,11 @@ const DesktopDashboard = () => {
   // Get user networth
   const {
     data: userNetworth,
-    isSuccess: userNetworthSuccess
+    isSuccess: userNetworthSuccess,
+    isLoading: userNetworthLoading,
+    refetch: refetchUserNetworth
     // error: networthError
-  } = useUpdateUserNetworthQuery(currentUser.uid);
+  } = useGetUserNetworthQuery(currentUser.uid);
 
   // get news
   const {
@@ -68,11 +70,13 @@ const DesktopDashboard = () => {
     error: fetchLeaderboardError
   } = useGetLeaderboardQuery();
 
-  const demoImage = "https://source.unsplash.com/fsSGgTBoX9Y";
+  const location = useLocation();
+  console.log(location?.state)
 
   useEffect(() => {
     refetchAvailableCoins();
-  }, []);
+    refetchUserNetworth();
+  }, [location?.state]);
 
   return (
     <>
@@ -81,7 +85,8 @@ const DesktopDashboard = () => {
         fetchWatchlistLoading ||
         // fetchNewsLoading ||
         fetchAvailableUsdCoinsLoading ||
-        leaderboardIsLoading) && <Loader />}
+        leaderboardIsLoading ||
+        userNetworthLoading || fetchNewsLoading) && <Loader />}
       {/* credit card */}
       <div className="w-80 m-auto md:m-0 md:w-96 h-56 lg:ml-8 bg-gradient-to-tr from-gray-900 to-gray-700  rounded-xl relative text-white shadow-2xl transition-transform transform hover:scale-110">
         <div className="w-full px-8 absolute top-8 font-text">
@@ -107,7 +112,7 @@ const DesktopDashboard = () => {
               <div className="">
                 <h4 className="font-light text-xs">Networth</h4>
                 <p className="font-semibold tracking-wider text-sm">
-                  {userNetworthSuccess && <span>${userNetworth.networth}</span>}
+                  {userNetworthSuccess && <span>${userNetworth?.networth}</span>}
                 </p>
               </div>
               {/* <div className="">
