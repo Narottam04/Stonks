@@ -1,8 +1,8 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.cryptocademy.android",
-  appName: "Cryptocademy",
+  appId: "com.stonks.android",
+  appName: "Stonks",
   webDir: "dist",
   bundledWebRuntime: false,
   plugins: {
@@ -14,6 +14,13 @@ const config: CapacitorConfig = {
       launchShowDuration: 3000,
       showSpinner: false
     }
+  },
+  server: {
+    androidScheme: "http",
+    cleartext: true,
+    allowNavigation: [
+      "http://170.187.238.118/*"
+    ]
   }
 };
 

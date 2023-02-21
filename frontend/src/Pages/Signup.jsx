@@ -65,7 +65,7 @@ function Signup() {
         //   }
         // ]);
 
-        const addUser = await fetch("/api/user", {
+        const addUser = await fetch(`${import.meta.env.VITE_STONKS_API_KEY}/api/user`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -100,7 +100,7 @@ function Signup() {
         //     coinSymbol: "vusd"
         //   }
         // ]);
-        const addVirtualUsd = await fetch("/api/user/addCoin", {
+        const addVirtualUsd = await fetch(`${import.meta.env.VITE_STONKS_API_KEY}/api/user/addCoin`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

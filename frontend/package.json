@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@capacitor/android": "^4.6.3",
+    "@capacitor/core": "^4.6.3",
     "@reduxjs/toolkit": "^1.7.2",
     "@supabase/supabase-js": "^1.33.2",
     "@tailwindcss/line-clamp": "^0.3.1",
@@ -35,7 +37,7 @@
     "ionic:serve": "npm run dev"
   },
   "devDependencies": {
-    "@capacitor/cli": "^4.6.2",
+    "@capacitor/cli": "^4.6.3",
     "@vitejs/plugin-react": "^3.0.1",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.0.0",

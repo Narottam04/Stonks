@@ -17,7 +17,7 @@ const Search = () => {
       if (search) {
         try {
           setIsLoading(true);
-          const res = await fetch(`/api/stocks/search?search=${search}`);
+          const res = await fetch(`${import.meta.env.VITE_STONKS_API_KEY}/api/stocks/search?search=${search}`);
 
           const data = await res.json();
           console.log(data);

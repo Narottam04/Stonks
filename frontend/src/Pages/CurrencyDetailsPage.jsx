@@ -86,7 +86,7 @@ const CurrencyDetailsPage = () => {
     setAddToGun(true);
     // check if stock already on watchlist
     const checkWatchlist = await fetch(
-      `/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
+      `${import.meta.env.VITE_STONKS_API_KEY}/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
     );
 
     if (!checkWatchlist.ok) {
@@ -97,7 +97,7 @@ const CurrencyDetailsPage = () => {
 
     if (watchlist === null) {
       // add the stock to watchlist
-      await fetch("/api/user/watchlist", {
+      await fetch(`${import.meta.env.VITE_STONKS_API_KEY}/api/user/watchlist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

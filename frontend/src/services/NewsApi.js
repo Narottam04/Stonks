@@ -10,7 +10,7 @@ export const NewsApi = createApi({
     getNews: builder.query({
       queryFn: async (query) => {
         try {
-          const res = await fetch(`/api/news?news=${query}`);
+          const res = await fetch(`${import.meta.env.VITE_STONKS_API_KEY}/api/news?news=${query}`);
 
           if (!res.ok) {
             throw new Error(`Something went wrong!`);
