@@ -71,12 +71,14 @@ const DesktopDashboard = () => {
   } = useGetLeaderboardQuery();
 
   const location = useLocation();
-  console.log(location?.state)
+  
+  
 
   useEffect(() => {
     refetchAvailableCoins();
     refetchUserNetworth();
   }, [location?.state]);
+  
 
   return (
     <>
