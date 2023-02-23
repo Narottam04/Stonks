@@ -10,7 +10,7 @@ export const NewsApi = createApi({
     getNews: builder.query({
       queryFn: async (query) => {
         try {
-          const res = await fetch(`/api/news?news=${query}`);
+          const res = await fetch(`https://stonks-api.webdrip.in/api/news?news=${query}`);
 
           if (!res.ok) {
             throw new Error(`Something went wrong!`);

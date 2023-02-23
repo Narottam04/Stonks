@@ -14,7 +14,7 @@ export default defineConfig({
   server: {
     proxy: {
       // '/api':"http://170.187.238.118",    
-      '/api':"http://localhost:8000",    
+      '/api':"https://stonks-api.webdrip.in",    
     },
   },
 });

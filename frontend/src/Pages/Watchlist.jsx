@@ -21,7 +21,7 @@ import Loader from "../Components/Loader";
 const trailingActions = (watchlistId,symbol, userId, refetch) => {
   async function handleDelete() {
     try {
-      const delWatchlist = await fetch(`/api/user/watchlist?watchlistId=${watchlistId}`,{
+      const delWatchlist = await fetch(`https://stonks-api.webdrip.in/api/user/watchlist?watchlistId=${watchlistId}`,{
         method:"DELETE"
       })
       console.log(delWatchlist)
