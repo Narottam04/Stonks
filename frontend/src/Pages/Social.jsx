@@ -1,35 +1,60 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useGetAllPostsQuery } from "../services/postsApi";
 import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { useAuth } from "../Context/AuthContext";
 import { Link } from "react-router-dom";
 import { Faq } from "../Components/FAQ";
+import ErrorToast from "../Components/ErrorToast";
 
 const Social = () => {
   const { currentUser } = useAuth();
   const { data, error, isLoading, isSuccess, refetch } = useGetAllPostsQuery();
 
+  const [errorMessage, setErrorMessage] = useState();
+  const toastRef = useRef();
+
+
   console.log(data)
 
-  async function handleUpvotePost(postId) {
+  async function handlePostReaction(postId) {
     try {
       if (typeof postId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("/api/post/upvote", {
+      const res = await fetch("/api/post/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           postId,
-          userId: currentUser?.uid
+          userId: currentUser?.uid,
+          type: "UPVOTE"
         })
       });
-    } catch (error) {}
+
+      
+      const upvoteRes = await res.json();
+      console.log("submit post", upvoteRes);
+
+      if (upvoteRes.hasOwnProperty("message")) {
+        throw new Error(upvoteRes?.message);
+      }
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+    } catch (error) {
+      setErrorMessage(error.message);
+      toastRef.current.show();
+    }
   }
+  
   return (
     <main className="flex items-start gap-8 lg:px-4 py-2 lg:py-8  mx-auto  max-w-[1600px]">
+      <ErrorToast message={errorMessage} ref={toastRef} />
+
       <section>
         <p className="text-white font-bold text-2xl md:text-3xl font-title pt-6 md:pt-0 mb-4 ml-3 px-2 md:px-4">
           Stonks Social
@@ -74,7 +99,7 @@ const Social = () => {
                 <p class="text-gray-400 mb-4 line-clamp-3">{post?.body}</p>
               </Link>
               <div class="flex items-center">
-                <button class="text-gray-400 focus:outline-none mr-1">
+                <button onClick={() => handlePostReaction(post?.id)} class="text-gray-400 focus:outline-none mr-1">
                   <BiUpvote className="text-gray-300 w-6 h-6 " />
                 </button>
                 <span class="text-gray-400  mr-4">1234</span>
