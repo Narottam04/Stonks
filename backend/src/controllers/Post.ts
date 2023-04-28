@@ -184,7 +184,7 @@ export const postReaction = expressAsyncHandler(async (req: Request, res: Respon
   }
 
   // If the user has already downvoted the post but now wants to upvote then delete -1 and add +1
-  if (checkUserVote !== null && type === "DOWNVOTE") {
+  if (checkUserVote !== null && type === "UPVOTE") {
     const removeVote = await db.votePost.delete({
       where: {
         id: checkUserVote?.id

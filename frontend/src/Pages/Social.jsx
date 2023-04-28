@@ -16,7 +16,7 @@ const Social = () => {
 
   console.log(data)
 
-  async function handlePostReaction(postId) {
+  async function handlePostUpvote(postId) {
     try {
       if (typeof postId !== "string") {
         throw new Error("Something went wrong! please try again");
@@ -34,11 +34,48 @@ const Social = () => {
       });
 
       
+      
       const upvoteRes = await res.json();
       console.log("submit post", upvoteRes);
 
       if (upvoteRes.hasOwnProperty("message")) {
         throw new Error(upvoteRes?.message);
+      }
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+    } catch (error) {
+      setErrorMessage(error.message);
+      toastRef.current.show();
+    }
+  }
+
+  async function handlePostDownvote(postId) {
+    try {
+      if (typeof postId !== "string") {
+        throw new Error("Something went wrong! please try again");
+      }
+      const res = await fetch("/api/post/reaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          postId,
+          userId: currentUser?.uid,
+          type: "DOWNVOTE"
+        })
+      });
+
+      
+      
+      const downvoteRes = await res.json();
+      console.log("submit post", downvoteRes);
+
+      if (downvoteRes.hasOwnProperty("message")) {
+        throw new Error(downvoteRes?.message);
       }
 
       if (!res.ok) {
@@ -99,12 +136,12 @@ const Social = () => {
                 <p class="text-gray-400 mb-4 line-clamp-3">{post?.body}</p>
               </Link>
               <div class="flex items-center">
-                <button onClick={() => handlePostReaction(post?.id)} class="text-gray-400 focus:outline-none mr-1">
+                <button onClick={() => handlePostUpvote(post?.id)} class="text-gray-400 focus:outline-none mr-1">
                   <BiUpvote className="text-gray-300 w-6 h-6 " />
                 </button>
                 <span class="text-gray-400  mr-4">1234</span>
                 <button class="text-gray-400 focus:outline-none mr-1">
-                  <BiDownvote className="text-gray-300 w-6 h-6 " />
+                  <BiDownvote onClick={() => handlePostDownvote(post?.id)} className="text-gray-300 w-6 h-6 " />
                 </button>
                 <button class="text-gray-400 focus:outline-none ">
                   <i class="fas fa-comment"></i>
