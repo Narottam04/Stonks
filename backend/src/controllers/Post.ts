@@ -19,16 +19,19 @@ export const addPost = expressAsyncHandler(async (req: Request, res: Response) =
 
   // check toxicity of the post
   const fetchToxicityResult = [
-    MindsDB.SQL.runQuery(`SELECT * FROM abuse_detection WHERE comment='${title}';`),
-    MindsDB.SQL.runQuery(`SELECT * FROM abuse_detection WHERE comment='${body}';`)
+    MindsDB.SQL.runQuery(`SELECT * FROM abuse_detection1 WHERE comment='${title}';`),
+    MindsDB.SQL.runQuery(`SELECT * FROM abuse_detection1 WHERE comment='${body}';`)
   ];
 
   const [fetchTitleToxicity, fetchDescriptionToxicity] = await Promise.all(fetchToxicityResult);
+
+  console.log(fetchTitleToxicity)
 
   const titleToxicity = fetchTitleToxicity?.rows[0]?.sentiment_explain;
   const descriptionToxicity = fetchDescriptionToxicity?.rows[0]?.sentiment_explain;
 
   const isToxic = isToxicFunc(titleToxicity) || isToxicFunc(descriptionToxicity);
+
 
   if (isToxic) {
     throw new Error(
@@ -58,7 +61,8 @@ export const getAllPost = expressAsyncHandler(async (req: Request, res: Response
         select: {
           VotePost: true
         }
-      }
+      },
+      user: true
     }
   });
 

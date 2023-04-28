@@ -21,13 +21,13 @@ export const Faq = ({ title, children }) => {
           />
         </svg>
 
-        <h1 class="mx-4 text-lg text-left text-gray-700 dark:text-white">{title}</h1>
+        <h1 class="mx-4 text-lg text-left text-white">{title}</h1>
       </button>
 
       {isOpen && (
         <div class="flex mt-8 ">
           <span class="border border-blue-500"></span>
-          <p class="max-w-3xl px-4 text-gray-500 dark:text-gray-300">{children}</p>
+          <p class="max-w-3xl px-4 text-gray-300">{children}</p>
         </div>
       )}
       <hr class="my-4 border-gray-200 dark:border-gray-700" />

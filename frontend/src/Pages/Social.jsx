@@ -9,6 +9,8 @@ const Social = () => {
   const { currentUser } = useAuth();
   const { data, error, isLoading, isSuccess, refetch } = useGetAllPostsQuery();
 
+  console.log(data)
+
   async function handleUpvotePost(postId) {
     try {
       if (typeof postId !== "string") {
@@ -60,12 +62,11 @@ const Social = () => {
               <div class="flex items-center mb-4">
                 <img
                   class="w-8 h-8 rounded-full object-cover object-center mr-2"
-                  src="https://i.pravatar.cc/50?img=21"
+                  src={`https://api.dicebear.com/6.x/fun-emoji/svg?seed=${post?.user?.name}&mouth=cute,kissHeart,lilSmile,smileLol,smileTeeth,tongueOut,wideSmile&backgroundColor=b6e3f4,c0aede,d1d4f9`}
                   alt="Avatar of User"
                 />
                 <div>
-                  <p class="text-sm font-medium text-gray-100">Username</p>
-                  <p class="text-xs text-gray-400">r/Subreddit</p>
+                  <p class="text-sm font-medium text-gray-100">{post?.user?.name}</p>
                 </div>
               </div>
               <Link to={`/app/social/${post.id}`} state={{ data: post }}>
@@ -103,7 +104,7 @@ const Social = () => {
                 Welcome To Stonks Community
               </h5>
             </div>
-            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+            <p class="mb-3 font-normal text-gray-400">
               Join our community of like-minded traders and gain valuable insights, tips, and
               support to help you make informed decisions and grow your portfolio.
             </p>

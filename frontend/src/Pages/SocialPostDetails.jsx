@@ -87,8 +87,8 @@ const SocialPostDetails = () => {
           }}
           className="mt-4"
         >
-          <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-            <div class="px-4 py-2  rounded-t-lg dark:bg-gray-800">
+          <div class="w-full mb-4 border  rounded-lg bg-gray-700 border-gray-600">
+            <div class="px-4 py-2  rounded-t-lg bg-gray-800">
               <label for="comment" class="sr-only">
                 Your comment
               </label>
@@ -97,7 +97,7 @@ const SocialPostDetails = () => {
                 rows="4"
                 value={PostComment}
                 onChange={(e) => setPostComment(e.target.value)}
-                class="w-full px-0 text-sm text-gray-900  border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+                class="w-full px-0 text-sm  border-0 bg-gray-800 focus:ring-0 text-white placeholder-gray-400"
                 placeholder="Write a comment..."
                 required
               ></textarea>
