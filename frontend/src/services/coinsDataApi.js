@@ -53,7 +53,7 @@ export const coinsDataApi = createApi({
     getStockData: builder.query({
       queryFn: async (id) => {
         try {
-          const res = await fetch(`https://stonks-api.webdrip.in/api/stocks/quote/summary?stock=${id}`);
+          const res = await fetch(`/api/stocks/quote/summary?stock=${id}`);
 
           if (!res.ok) {
             throw new Error("Something went wrong! Please try again");
@@ -71,7 +71,7 @@ export const coinsDataApi = createApi({
       queryFn: async ({ id, startDate, endDate }) => {
         try {
           const res = await fetch(
-            `https://stonks-api.webdrip.in/api/stocks/quote/historical?stock=${id}&start=${startDate}&end=${endDate}`
+            `/api/stocks/quote/historical?stock=${id}&start=${startDate}&end=${endDate}`
           );
 
           if (!res.ok) {

@@ -14,7 +14,7 @@ export const fetchAvailableCoins = createAsyncThunk(
   "availableCoins/fetchAvailableCoin",
   async (id) => {
     // get available coins
-    const res = await fetch(`https://stonks-api.webdrip.in/api/user/vusd?id=${id}`);
+    const res = await fetch(`/api/user/vusd?id=${id}`);
 
     if (!res.ok) {
       throw new Error(`Something went wrong!`);

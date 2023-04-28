@@ -10,6 +10,7 @@ import FloatingInput from "../Components/Buttons/FloatingInput";
 import FloatingPasswordInput from "../Components/Buttons/FloatingPasswordInput";
 import ErrorToast from "../Components/ErrorToast";
 import FormAppInfo from "../Components/FormAppInfo";
+import GoogleLoginBtn from "../Components/Buttons/GoogleLoginBtn";
 
 const initialValues = {
   email: "",
@@ -125,17 +126,18 @@ function Login() {
           </Link>
           {/* Social Provider signup */}
           {/* Turned off due to native android platform error for google sign in */}
-          {/* <div className="relative my-4">
-                        <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-black text-gray-100"> Or continue with </span>
-                        </div>
-                    </div>
-                    <div className="mt-8  space-y-4">
-                        <GoogleLoginBtn/>
-                    </div> */}
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-black text-gray-100"> Or continue with </span>
+            </div>
+          </div>
+          <div className="mt-8  space-y-4">
+            <GoogleLoginBtn />
+          </div>
+          {/*  */}
         </div>
         <FormAppInfo />
       </div>

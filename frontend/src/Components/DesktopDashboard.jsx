@@ -156,7 +156,7 @@ const DesktopDashboard = () => {
                     </div>
                     <div>
                       <p className="font-text text-xl">
-                        <p className="text-white">${coin.item.price_btc.toFixed(9)}</p>
+                        <p className="text-white">${coin.item.price_btc?.toFixed(9)}</p>
                       </p>
                     </div>
                   </li>

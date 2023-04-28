@@ -4,7 +4,6 @@ import { getAdditionalUserInfo } from "firebase/auth";
 
 import google from "../../Assets/svg/google.svg";
 import { useAuth } from "../../Context/AuthContext";
-import { supabase } from "../../Utils/init-supabase";
 
 import ErrorToast from "../ErrorToast";
 
@@ -19,37 +18,55 @@ const GoogleLoginBtn = () => {
     try {
       const response = await signInWithGoogle();
       const { isNewUser } = getAdditionalUserInfo(response);
+      console.log("isNewUser", isNewUser);
+      let userNetworth, availableCoins;
       if (isNewUser) {
+        console.log("adding those dataaa");
         // add user data with networth on database
-        const { data, error } = await supabase.from("users").upsert([
-          {
-            userId: response.user.uid,
-            username: response.user.displayName,
+        const addUser = await fetch(`/api/user`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            id: response.user.uid,
+            name: response.user.displayName,
             email: response.user.email
-          }
-        ]);
+          })
+        });
 
-        // if(error){
-        //     console.log(error)
-        //     await deleteUser(response.user)
-        //     alert("Something Went Wrong! Please Try Again.")
-        // }
+        const addUserRes = await addUser.json();
+
+        if (!addUser.ok) {
+          throw new Error(addUser);
+        }
 
         // give 100k coins to user
-        console.log(data);
-        const { error: addToPortfolioError } = await supabase.from("portfolio").upsert([
-          {
-            userId: response.user.uid,
-            coinId: "USD",
-            coinName: "Virtual USD",
-            image: "https://img.icons8.com/fluency/96/000000/us-dollar-circled.png",
-            amount: 100000
-          }
-        ]);
+        const addVirtualUsd = await fetch(`/api/user/addCoin`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: response.user.uid
+          })
+        });
+        const addUsdRes = await addVirtualUsd.json();
+
+        if (!addVirtualUsd.ok) {
+          throw new Error(addVirtualUsd);
+        }
+        userNetworth = addUserRes;
+        availableCoins = addUsdRes;
       }
 
       console.log("logged in user successfully");
-      navigate("/app");
+      navigate("/app", {
+        state: {
+          userNetworth,
+          availableCoins
+        }
+      });
     } catch (error) {
       setErrorMessage(error.message);
       toastRef.current.show();

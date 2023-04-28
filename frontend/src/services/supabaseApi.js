@@ -37,7 +37,7 @@ export const supabaseApi = createApi({
     getWatchlistData: builder.query({
       queryFn: async (id) => {
         try {
-          const res = await fetch(`https://stonks-api.webdrip.in/api/user/allWatchlist?id=${id}`);
+          const res = await fetch(`/api/user/allWatchlist?id=${id}`);
 
           if (!res.ok) {
             throw new Error(`Something went wrong!`);
@@ -84,7 +84,7 @@ export const supabaseApi = createApi({
           // } else {
           //   return { data: [] };
           // }
-          const res = await fetch(`https://stonks-api.webdrip.in/api/user/allPortfolio?id=${id}`);
+          const res = await fetch(`/api/user/allPortfolio?id=${id}`);
 
           if (!res.ok) {
             throw new Error(`Something went wrong!`);
@@ -102,7 +102,7 @@ export const supabaseApi = createApi({
     getUserNetworth: builder.query({
       queryFn: async (id) => {
         try {
-          const res = await fetch(`https://stonks-api.webdrip.in/api/user/networth?id=${id}`);
+          const res = await fetch(`/api/user/networth?id=${id}`);
 
           if (!res.ok) {
             throw new Error(`Something went wrong!`);
@@ -119,7 +119,7 @@ export const supabaseApi = createApi({
     updateUserNetworth: builder.query({
       queryFn: async (id) => {
         try {
-          const res = await fetch(`https://stonks-api.webdrip.in/api/user/networth`, {
+          const res = await fetch(`/api/user/networth`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -144,7 +144,7 @@ export const supabaseApi = createApi({
     getLeaderboard: builder.query({
       queryFn: async () => {
         try {
-          const res = await fetch(`https://stonks-api.webdrip.in/api/user/leaderboard`);
+          const res = await fetch(`/api/user/leaderboard`);
 
           if (!res.ok) {
             throw new Error(`Something went wrong!`);
@@ -162,7 +162,7 @@ export const supabaseApi = createApi({
       queryFn: async (id) => {
         try {
           // get available coins
-          const res = await fetch(`https://stonks-api.webdrip.in/api/user/vusd?id=${id}`);
+          const res = await fetch(`/api/user/vusd?id=${id}`);
 
           if (!res.ok) {
             throw new Error(`Something went wrong!`);

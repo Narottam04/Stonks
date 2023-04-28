@@ -57,7 +57,7 @@ const BuyCoins = ({ data, modal, setModal }) => {
     try {
       setOrderLoading(true);
 
-      const buyStock = await fetch("https://stonks-api.webdrip.in/api/user/buyStock", {
+      const buyStock = await fetch("/api/user/buyStock", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

@@ -174,6 +174,20 @@ const Sidebar = ({ openSidebar, active }) => {
             </Link>
           </li>
 
+          <li className="my-px">
+            <Link
+              to="/app/social"
+              className={`
+                        ${active === "news" ? "bg-gradient-to-tr from-gray-900 to-gray-700" : ""}
+                        flex flex-row items-center h-10 px-3 rounded-lg group text-gray-300  hover:bg-gradient-to-tr from-gray-900 to-gray-700 `}
+            >
+              <span className="flex items-center justify-center text-lg text-red-400">
+                <MdTravelExplore className="text-gray-300 w-6 h-6 " />
+              </span>
+              <span className="ml-3">Posts</span>
+            </Link>
+          </li>
+
           {/* <li className="my-px">
             <Link
               to="/app/faq"

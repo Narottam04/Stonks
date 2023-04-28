@@ -14,6 +14,7 @@ import { HistoricalChart, HistoricalLineChart } from "../Components/CoinChart";
 import ErrorToast from "../Components/ErrorToast";
 import Loader from "../Components/Loader";
 import dayjs from "dayjs";
+import CompanyChat from "../Components/CompanyChat";
 
 // import BuyCoins from "../Components/BuyCoins";
 // import SellCoins from "../Components/SellCoins";
@@ -21,6 +22,7 @@ import dayjs from "dayjs";
 const BuyCoins = lazy(() => import("../Components/BuyCoins"));
 const SellCoins = lazy(() => import("../Components/SellCoins"));
 const CoinStats = lazy(() => import("../Components/CoinStats"));
+const LiveChat = lazy(() => import("../Components/LiveChat"));
 
 const CurrencyDetailsPage = () => {
   const { id } = useParams();
@@ -60,17 +62,16 @@ const CurrencyDetailsPage = () => {
 
   useEffect(() => {
     const refetchInterval = setInterval(() => {
-      if(data?.marketState && data?.marketState !=="CLOSED"){
-        console.log("refetching market prices")
-        refetch()
-      }else{
-        console.log("MARKET IS CLOSED")
+      if (data?.marketState && data?.marketState !== "CLOSED") {
+        console.log("refetching market prices");
+        refetch();
+      } else {
+        console.log("MARKET IS CLOSED");
       }
     }, 10000);
 
-    return () => clearInterval(refetchInterval)
-  }, [])
-  
+    return () => clearInterval(refetchInterval);
+  }, []);
 
   useEffect(() => {
     if (error || fetchChartDataError) {
@@ -86,7 +87,7 @@ const CurrencyDetailsPage = () => {
     setAddToGun(true);
     // check if stock already on watchlist
     const checkWatchlist = await fetch(
-      `https://stonks-api.webdrip.in/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
+      `/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
     );
 
     if (!checkWatchlist.ok) {
@@ -97,7 +98,7 @@ const CurrencyDetailsPage = () => {
 
     if (watchlist === null) {
       // add the stock to watchlist
-      await fetch("https://stonks-api.webdrip.in/api/user/watchlist", {
+      await fetch("/api/user/watchlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -201,8 +202,7 @@ const CurrencyDetailsPage = () => {
                 </div>
                 <div className="flex flex-col justify-start">
                   <p className=" text-lg text-left md:text-2xl text-white font-bold my-2">
-                    {data?.regularMarketPrice && data?.regularMarketPrice}{" "}
-                    {data?.currency}
+                    {data?.regularMarketPrice && data?.regularMarketPrice} {data?.currency}
                   </p>
                 </div>
               </div>
@@ -376,6 +376,14 @@ const CurrencyDetailsPage = () => {
           currency={data?.currency}
         />
       )}
+
+      <div className="flex flex-col md:flex-row md:justify-between mb-8 ">
+        <LiveChat
+          companyName={data?.displayName ? data?.displayName : data?.shortName}
+          data={data}
+        />
+        <CompanyChat companyName={data?.displayName ? data?.displayName : data?.shortName} />
+      </div>
 
       {isSuccess && (
         <CoinStats

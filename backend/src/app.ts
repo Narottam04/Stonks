@@ -7,6 +7,9 @@ import { errorHandler, notFound } from "./middlewares/ErrorMiddleware";
 import { userRoute } from "./routes/userRoutes";
 import asyncHandler from "express-async-handler";
 let googleNewsAPI = require("google-news-json");
+import { Server } from "socket.io";
+import { postRouter } from "./routes/postsRoutes";
+import { connectMindsDB } from "./config/mindsDB-server";
 
 dotenv.config();
 
@@ -16,16 +19,19 @@ if (!process.env.PORT) {
 
 const PORT: Number = parseInt(process.env.PORT as string, 10);
 
+// Connect to mindsdb
+connectMindsDB();
+
 const app = express();
 
-
 const allowedOrigins = [
-  'capacitor://localhost',
-  'ionic://localhost',
-  'http://localhost',
-  'http://localhost:8080',
-  'http://localhost:8100',
-  'http://localhost:5173',
+  "capacitor://localhost",
+  "ionic://localhost",
+  "http://localhost",
+  "http://localhost:8080",
+  "http://localhost:8100",
+  "http://localhost:5173",
+  "http://localhost:5174",
   "https://stonks-app.webdrip.in"
 ];
 
@@ -36,14 +42,21 @@ const corsOptions = {
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
-      callback(new Error('Origin not allowed by CORS'));
+      callback(new Error("Origin not allowed by CORS"));
     }
-  },
+  }
 };
 
+const io = new Server({
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"]
+  }
+});
+
 // Enable preflight requests for all routes
-app.options('*', cors(corsOptions));
-app.use(cors(corsOptions))
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -56,6 +69,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/user", userRoute);
 app.use("/api/stocks", stocksRoute);
+app.use("/api/post", postRouter);
 
 app.get(
   "/api/news",
