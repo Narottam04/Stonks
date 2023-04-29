@@ -7,9 +7,10 @@ import {
   AiOutlineHome,
   AiOutlineBarChart,
   AiOutlineSearch,
-  AiFillQuestionCircle
+  AiFillQuestionCircle,
+  AiFillRobot
 } from "react-icons/ai";
-import { BsFillBarChartFill } from "react-icons/bs";
+import { BsFillBarChartFill, BsPhone } from "react-icons/bs";
 
 import logo from "../Assets/svg/stonks-logo-sideways-light.svg";
 
@@ -178,13 +179,27 @@ const Sidebar = ({ openSidebar, active }) => {
             <Link
               to="/app/social"
               className={`
-                        ${active === "news" ? "bg-gradient-to-tr from-gray-900 to-gray-700" : ""}
+                        ${active === "social" ? "bg-gradient-to-tr from-gray-900 to-gray-700" : ""}
                         flex flex-row items-center h-10 px-3 rounded-lg group text-gray-300  hover:bg-gradient-to-tr from-gray-900 to-gray-700 `}
             >
               <span className="flex items-center justify-center text-lg text-red-400">
-                <MdTravelExplore className="text-gray-300 w-6 h-6 " />
+                <BsPhone className="text-gray-300 w-6 h-6 " />
               </span>
-              <span className="ml-3">Posts</span>
+              <span className="ml-3">Social</span>
+            </Link>
+          </li>
+
+          <li className="my-px">
+            <Link
+              to="/app/billy"
+              className={`
+                        ${active === "billy" ? "bg-gradient-to-tr from-gray-900 to-gray-700" : ""}
+                        flex flex-row items-center h-10 px-3 rounded-lg group text-gray-300  hover:bg-gradient-to-tr from-gray-900 to-gray-700 `}
+            >
+              <span className="flex items-center justify-center text-lg text-red-400">
+                <AiFillRobot className="text-gray-300 w-6 h-6 " />
+              </span>
+              <span className="ml-3">Chat With Billy</span>
             </Link>
           </li>
 
@@ -208,7 +223,9 @@ const Sidebar = ({ openSidebar, active }) => {
               className="flex items-center p-2 mt-5 space-x-4 justify-self-end cursor-pointer"
             >
               <img
-                src={`https://avatars.dicebear.com/api/initials/${currentUser.displayName}.svg`}
+                // src={`https://avatars.dicebear.com/api/initials/${currentUser.displayName}.svg`}
+                src={`https://api.dicebear.com/6.x/fun-emoji/svg?seed=${currentUser?.uid}&mouth=cute,kissHeart,lilSmile,smileLol,smileTeeth,tongueOut,wideSmile&backgroundColor=b6e3f4,c0aede,d1d4f9`}
+
                 alt=""
                 className="w-12 h-12 rounded-lg dark:bg-gray-500"
               />

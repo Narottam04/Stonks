@@ -54,8 +54,9 @@ const corsOptions = {
 
 
 // Enable preflight requests for all routes
-app.options("*", cors(corsOptions));
-app.use(cors(corsOptions));
+// app.options("*", cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -89,7 +90,7 @@ app.get(
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -99,7 +100,9 @@ io.on("connection", (socket) => {
   console.log(socket.id);
 });
 
-
+io.engine.on("connection_error", (err) => {
+  console.log(err);
+});
 
 // custom error handler
 app.use(notFound);

@@ -78,7 +78,9 @@ const UserProfile = () => {
           <div className="px-4 py-5 sm:p-6 ">
             <div className="flex items-center p-2  space-x-4 justify-self-end cursor-pointer">
               <img
-                src={`https://avatars.dicebear.com/api/initials/${currentUser.displayName}.svg`}
+                // src={`https://avatars.dicebear.com/api/initials/${currentUser.displayName}.svg`}
+                src={`https://api.dicebear.com/6.x/fun-emoji/svg?seed=${currentUser?.uid}&mouth=cute,kissHeart,lilSmile,smileLol,smileTeeth,tongueOut,wideSmile&backgroundColor=b6e3f4,c0aede,d1d4f9`}
+
                 alt=""
                 className="w-12 h-12 rounded-full dark:bg-gray-500"
               />

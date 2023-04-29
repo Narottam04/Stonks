@@ -1,15 +1,13 @@
 import { BrowserRouter } from "react-router-dom";
 
-
-
 import "./App.css";
 
 import AnimatedRoutes from "./Components/AnimatedRoutes";
 import ScrollToTop from "./Components/ScrollToTop";
 import { useGetCurrencyConversionsQuery } from "./services/coinsDataApi";
 
-function App() {
 
+function App() {
   const { data, error, isLoading, isSuccess } = useGetCurrencyConversionsQuery();
   if (isSuccess) {
     console.log(data);
