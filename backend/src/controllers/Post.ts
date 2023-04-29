@@ -57,14 +57,11 @@ export const addPost = expressAsyncHandler(async (req: Request, res: Response) =
 export const getAllPost = expressAsyncHandler(async (req: Request, res: Response) => {
   const post = await db.post.findMany({
     include: {
-      _count: {
-        select: {
-          VotePost: true
-        }
-      },
+      VotePost:true,
       user: true
     }
   });
+
 
   res.json(post);
 });
@@ -77,7 +74,7 @@ export const addComment = expressAsyncHandler(async (req: Request, res: Response
 
   // check toxicity of comment
   const fetchCommnentToxicity = await MindsDB.SQL.runQuery(
-    `SELECT * FROM abuse_detection WHERE comment='${body}';`
+    `SELECT * FROM abuse_detection1 WHERE comment='${body}';`
   );
 
   const commentToxicity = fetchCommnentToxicity?.rows[0]?.sentiment_explain;
@@ -116,7 +113,8 @@ export const getPostComment = expressAsyncHandler(async (req: Request, res: Resp
       postId: id
     },
     include: {
-      user: true
+      user: true,
+      VoteComment: true
     }
   });
 
@@ -195,6 +193,85 @@ export const postReaction = expressAsyncHandler(async (req: Request, res: Respon
       data: {
         userId,
         postId
+      }
+    });
+
+    res.json(vote);
+  }
+});
+
+// @desc  UPVOTE A POST
+// @route GET /api/post/comment/reaction
+// @access PRIVATE
+export const commentReaction = expressAsyncHandler(async (req: Request, res: Response) => {
+  const {
+    voting,
+    userId,
+    commentId,
+    type
+  }: { voting: number; userId: string; commentId: string; type: "UPVOTE" | "DOWNVOTE" } = req.body;
+
+  const checkUserVote = await db.voteComment.findFirst({
+    where: {
+      userId,
+      commentId
+    }
+  });
+
+  // If the user has not upvoted the post then add +1
+  if (checkUserVote === null && type === "UPVOTE") {
+    const vote = await db.voteComment.create({
+      data: {
+        userId,
+        commentId
+      }
+    });
+
+    res.json(vote);
+  }
+  // If the user wants to downvote the post then add -1
+  if (checkUserVote === null && type === "DOWNVOTE") {
+    const vote = await db.voteComment.create({
+      data: {
+        voting: -1,
+        userId,
+        commentId
+      }
+    });
+
+    res.json(vote);
+  }
+  // If the user has already upvoted the post but now wants to downvote then delete +1 and add -1
+  if (checkUserVote !== null && type === "DOWNVOTE") {
+    const removeVote = await db.voteComment.delete({
+      where: {
+        id: checkUserVote?.id
+      }
+    });
+
+    const vote = await db.voteComment.create({
+      data: {
+        voting: -1,
+        userId,
+        commentId
+      }
+    });
+
+    res.json(vote);
+  }
+
+  // If the user has already downvoted the post but now wants to upvote then delete -1 and add +1
+  if (checkUserVote !== null && type === "UPVOTE") {
+    const removeVote = await db.voteComment.delete({
+      where: {
+        id: checkUserVote?.id
+      }
+    });
+
+    const vote = await db.voteComment.create({
+      data: {
+        userId,
+        commentId
       }
     });
 

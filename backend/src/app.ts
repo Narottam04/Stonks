@@ -7,9 +7,11 @@ import { errorHandler, notFound } from "./middlewares/ErrorMiddleware";
 import { userRoute } from "./routes/userRoutes";
 import asyncHandler from "express-async-handler";
 let googleNewsAPI = require("google-news-json");
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { postRouter } from "./routes/postsRoutes";
 import { connectMindsDB } from "./config/mindsDB-server";
+import { createServer } from "http";
+
 
 dotenv.config();
 
@@ -18,11 +20,14 @@ if (!process.env.PORT) {
 }
 
 const PORT: Number = parseInt(process.env.PORT as string, 10);
+const SOCKETPORT: Number = parseInt(process.env.SOCKETPORT as string)
+
 
 // Connect to mindsdb
 connectMindsDB();
 
 const app = express();
+
 
 const allowedOrigins = [
   "capacitor://localhost",
@@ -47,12 +52,6 @@ const corsOptions = {
   }
 };
 
-const io = new Server({
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"]
-  }
-});
 
 // Enable preflight requests for all routes
 app.options("*", cors(corsOptions));
@@ -85,6 +84,22 @@ app.get(
     return res.json(fetchNews);
   })
 );
+
+// socket io 
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("We are live and connected");
+  console.log(socket.id);
+});
+
+
 
 // custom error handler
 app.use(notFound);

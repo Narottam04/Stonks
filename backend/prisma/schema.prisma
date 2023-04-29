@@ -98,7 +98,7 @@ model VotePost {
 
 model VoteComment {
   id        String   @id @default(uuid())
-  voting    Int
+  voting    Int      @default(1)
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   comment   Comment  @relation(fields: [commentId], references: [id])

@@ -70,7 +70,7 @@ const SocialPostDetails = () => {
           {/* upvote & downvote section */}
           <div className="flex flex-col justify-center items-center">
             <BiUpvote className="text-gray-300 w-6 h-6 " />
-            <p class="text-gray-400 my-1">12</p>
+            <p className="text-gray-400 my-1">12</p>
             <BiDownvote className="text-gray-300 w-6 h-6 " />
           </div>
           {/* post title and description */}
@@ -87,9 +87,9 @@ const SocialPostDetails = () => {
           }}
           className="mt-4"
         >
-          <div class="w-full mb-4 border  rounded-lg bg-gray-700 border-gray-600">
-            <div class="px-4 py-2  rounded-t-lg bg-gray-800">
-              <label for="comment" class="sr-only">
+          <div className="w-full mb-4 border  rounded-lg bg-gray-700 border-gray-600">
+            <div className="px-4 py-2  rounded-t-lg bg-gray-800">
+              <label for="comment" className="sr-only">
                 Your comment
               </label>
               <textarea
@@ -97,15 +97,15 @@ const SocialPostDetails = () => {
                 rows="4"
                 value={PostComment}
                 onChange={(e) => setPostComment(e.target.value)}
-                class="w-full px-0 text-sm  border-0 bg-gray-800 focus:ring-0 text-white placeholder-gray-400"
+                className="w-full px-0 text-sm  border-0 bg-gray-800 focus:ring-0 text-white placeholder-gray-400"
                 placeholder="Write a comment..."
                 required
               ></textarea>
             </div>
-            <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
+            <div className="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
               <button
                 type="submit"
-                class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
+                className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
               >
                 {submitComment ? "Adding your comment..." : "Post Comment"}
               </button>
@@ -113,9 +113,9 @@ const SocialPostDetails = () => {
           </div>
         </form>
 
-        <p class="ml-auto text-xs text-gray-500 dark:text-gray-400">
+        <p className="ml-auto text-xs text-gray-500 dark:text-gray-400">
           Remember, contributions to this topic should follow our{" "}
-          <a href="#" class="text-blue-600 dark:text-blue-500 hover:underline">
+          <a href="#" className="text-blue-600 dark:text-blue-500 hover:underline">
             Community Guidelines
           </a>
           .
@@ -130,21 +130,21 @@ const SocialPostDetails = () => {
               <div key={idx} className="flex items-start gap-x-4 my-8 ">
                 {/* upvote & downvote section */}
                 <div className="flex flex-col justify-center items-center">
-                  <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-4"></div>
-                  <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-2 my-2"></div>
-                  <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-4"></div>
+                  <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-4"></div>
+                  <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-2 my-2"></div>
+                  <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-4"></div>
                 </div>
                 {/* comment */}
                 <div>
                   {/* user */}
                   <div className="flex align-center gap-x-1">
-                    <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-4"></div>
+                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-4"></div>
 
-                    <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-8 "></div>
+                    <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-8 "></div>
                   </div>
 
-                  <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-[200px] lg:w-[400px] mt-2"></div>
-                  <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-[200px] lg:w-[400px] mt-2"></div>
+                  <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-[200px] lg:w-[400px] mt-2"></div>
+                  <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-[200px] lg:w-[400px] mt-2"></div>
                 </div>
               </div>
             ))}
@@ -158,7 +158,7 @@ const SocialPostDetails = () => {
                 {/* upvote & downvote section */}
                 <div className="flex flex-col justify-center items-center">
                   <BiUpvote className="text-gray-300 w-4 h-4 cursor-pointer" />
-                  <p class="text-gray-400 my-1">12</p>
+                  <p className="text-gray-400 my-1">12</p>
                   <BiDownvote className="text-gray-300 w-4 h-4 cursor-pointer" />
                 </div>
                 {/* comment */}
@@ -185,8 +185,8 @@ const SocialPostDetails = () => {
         {/* card to welcome folks to stonks social */}
 
         {/* stonks faq */}
-        <div class="hidden lg:block max-w-sm  p-6  rounded-lg shadow bg-[#1a1a1b] border-gray-700">
-          <h5 class="mb-2 text-2xl font-bold tracking-tight  text-white">Rules</h5>
+        <div className="hidden lg:block max-w-sm  p-6  rounded-lg shadow bg-[#1a1a1b] border-gray-700">
+          <h5 className="mb-2 text-2xl font-bold tracking-tight  text-white">Rules</h5>
 
           <Faq title="No spam or self-promotion">
             Spam, ads, solicitations (including referral links), and self-promotion posts or

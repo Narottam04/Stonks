@@ -15,12 +15,12 @@ const LiveChat = ({ companyName, data }) => {
             data?.marketState !== "CLOSED" && "hidden"
           } absolute bg-black inset-0 bg-opacity-75`}
         >
-          <div class="max-w-sm p-6 rounded-lg shadow bg-gray-800 border-gray-700 mx-auto">
+          <div className="max-w-sm p-6 rounded-lg shadow bg-gray-800 border-gray-700 mx-auto">
             <img alt="crying cat" src="https://img.icons8.com/emoji/96/null/crying-cat.png" />
-            <h5 class="mb-2 text-2xl font-semibold tracking-tight text-white">
+            <h5 className="mb-2 text-2xl font-semibold tracking-tight text-white">
               Market Is Close!!!
             </h5>
-            <p class="mb-3 font-normal text-gray-400">
+            <p className="mb-3 font-normal text-gray-400">
               Live chat is availble when the market is open.
             </p>
           </div>

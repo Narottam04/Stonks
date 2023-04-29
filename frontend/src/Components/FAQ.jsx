@@ -5,10 +5,10 @@ export const Faq = ({ title, children }) => {
 
   return (
     <div>
-      <button onClick={() => setIsOpen(!isOpen)} class="flex items-center focus:outline-none mt-2">
+      <button onClick={() => setIsOpen(!isOpen)} className="flex items-center focus:outline-none mt-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="flex-shrink-0 w-6 h-6 text-blue-500"
+          className="flex-shrink-0 w-6 h-6 text-blue-500"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -21,16 +21,16 @@ export const Faq = ({ title, children }) => {
           />
         </svg>
 
-        <h1 class="mx-4 text-lg text-left text-white">{title}</h1>
+        <h1 className="mx-4 text-lg text-left text-white">{title}</h1>
       </button>
 
       {isOpen && (
-        <div class="flex mt-8 ">
-          <span class="border border-blue-500"></span>
-          <p class="max-w-3xl px-4 text-gray-300">{children}</p>
+        <div className="flex mt-8 ">
+          <span className="border border-blue-500"></span>
+          <p className="max-w-3xl px-4 text-gray-300">{children}</p>
         </div>
       )}
-      <hr class="my-4 border-gray-200 dark:border-gray-700" />
+      <hr className="my-4 border-gray-200 dark:border-gray-700" />
     </div>
   );
 };

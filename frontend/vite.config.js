@@ -13,7 +13,8 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api':"http://localhost:8000",    
+      '/api':"http://localhost:8000", 
+      '/socket':"http://localhost:8000"   
       // '/api':"https://stonks-api.webdrip.in",    
     },
   },
