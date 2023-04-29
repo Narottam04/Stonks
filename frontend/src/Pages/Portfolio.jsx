@@ -29,6 +29,8 @@ const Portfolio = () => {
     refetch: refetchPortfolioData
   } = useGetPortfolioDataQuery(currentUser.uid);
 
+
+  
   const currencyConverter = (amount, usdValueOfAmount) => {
     const usdEquivalent = amount / usdValueOfAmount;
     return usdEquivalent.toFixed(2);
@@ -45,7 +47,8 @@ const Portfolio = () => {
     refetch: refetchPortfolioCoinData
   } = useGetPortfolioCoinDataQuery(currentUser.uid);
   // , { pollingInterval: 5000 }
-
+  
+  console.log("portfolio data is", portfolioData)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -74,6 +77,7 @@ const Portfolio = () => {
 
   // get coin percentage change
   function percentageChange(stockId, coinAmount, amount, currency) {
+ 
     const coinData = portfolioCoinData.filter((stock) => stock.symbol === stockId);
     if (coinData.length !== 0) {
       const currentCoinPrice = currencyConverter(

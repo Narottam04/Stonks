@@ -9,25 +9,15 @@ export const supabaseApi = createApi({
     getPortfolioData: builder.query({
       async queryFn(id) {
         try {
-          let { data: portfolio, error } = await supabase
-            .from("portfolio")
-            .select(
-              `
-                coinId,
-                coinSymbol,
-                coinName,
-                image,
-                amount,
-                coinAmount
-              `
-            )
-            .eq("userId", `${id}`)
-            .not("coinId", "eq", "USD");
+          const res = await fetch(`/api/user/allPortfolio?id=${id}`);
 
-          if (error) {
-            throw new Error(error);
+          const data = await res.json();
+
+
+          if (!res.ok) {
+            throw new Error("Something went wrong!");
           }
-          return { data: portfolio };
+          return { data };
         } catch (error) {
           return { error: error };
         }
