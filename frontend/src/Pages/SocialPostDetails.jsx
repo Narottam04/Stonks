@@ -144,7 +144,7 @@ const SocialPostDetails = () => {
       if (typeof commentId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("/api/post/comment/reaction", {
+      const res = await fetch("https://stonks-api.webdrip.in/api/post/comment/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -178,7 +178,7 @@ const SocialPostDetails = () => {
       if (typeof commentId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("/api/post/comment/reaction", {
+      const res = await fetch("https://stonks-api.webdrip.in/api/post/comment/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

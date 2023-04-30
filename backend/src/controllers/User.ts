@@ -275,6 +275,27 @@ export const getAvailableStock = asyncHandler(async (req: Request, res: Response
   res.json(availableStock);
 });
 
+// @desc Get user porto
+// @route GET /api/user/watchlist
+// @access PRIVATE
+export const getPurchasedStock = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.query;
+
+  if (typeof id !== "string") {
+    throw new Error("Something went wrong!");
+  }
+
+  const purchasedStock = await db.portfolio.findMany({
+    where: {
+      userId: id
+    }
+  });
+
+  const removeVirtualUsd = purchasedStock.filter((stock) => stock?.stockId !== "VirtualUSD");
+
+  res.json(removeVirtualUsd);
+});
+
 // @desc DEL user watchlist
 // @route GET /api/user/watchlist
 // @access PRIVATE

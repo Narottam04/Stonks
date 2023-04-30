@@ -29,8 +29,6 @@ const Portfolio = () => {
     refetch: refetchPortfolioData
   } = useGetPortfolioDataQuery(currentUser.uid);
 
-
-  
   const currencyConverter = (amount, usdValueOfAmount) => {
     const usdEquivalent = amount / usdValueOfAmount;
     return usdEquivalent.toFixed(2);
@@ -47,17 +45,17 @@ const Portfolio = () => {
     refetch: refetchPortfolioCoinData
   } = useGetPortfolioCoinDataQuery(currentUser.uid);
   // , { pollingInterval: 5000 }
-  
-  console.log("portfolio data is", portfolioData)
+
+  console.log("portfolio data is", portfolioData);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const openMarket = portfolioCoinData?.filter(stock => stock?.marketState !=="CLOSED")  
-      if(openMarket?.length !== 0){
-        console.log("updating portfolio prices")
-        refetchPortfolioCoinData()
-      }else{
-        console.log("All markets are closed")
+      const openMarket = portfolioCoinData?.filter((stock) => stock?.marketState !== "CLOSED");
+      if (openMarket?.length !== 0) {
+        console.log("updating portfolio prices");
+        refetchPortfolioCoinData();
+      } else {
+        console.log("All markets are closed");
       }
     }, 10000);
 
@@ -77,8 +75,8 @@ const Portfolio = () => {
 
   // get coin percentage change
   function percentageChange(stockId, coinAmount, amount, currency) {
- 
     const coinData = portfolioCoinData.filter((stock) => stock.symbol === stockId);
+
     if (coinData.length !== 0) {
       const currentCoinPrice = currencyConverter(
         coinData[0]?.preMarketPrice ? coinData[0]?.preMarketPrice : coinData[0]?.regularMarketPrice,
@@ -186,12 +184,18 @@ const Portfolio = () => {
         {isSuccess &&
           fetchPortfolioCoinDataSuccess &&
           portfolioCoinData.map((stock, index) => {
+            const purchasedStockData = portfolioData.filter(
+              (purchasedStock) => purchasedStock?.stockId === stock?.symbol
+            );
+
             const coinPercentageChange = percentageChange(
               stock.symbol,
-              stock.stockAmount,
-              stock.stockPurchasedPrice,
+              purchasedStockData[0]?.stockAmount,
+              purchasedStockData[0]?.amount,
               stock?.currency
             );
+            console.log(stock);
+
             return (
               <li
                 key={index}
@@ -231,25 +235,10 @@ const Portfolio = () => {
 
                 <div className="flex items-center justify-start ml-auto md:ml-0 ">
                   <p className="w-28 md:w-40 text-white font-semibold text-left break-words">
-                    {stock?.stockAmount ? (
-                      stock.stockAmount
-                    ) : (
-                      <span>
-                        {stock?.preMarketPrice ? stock?.preMarketPrice : stock?.regularMarketPrice}{" "}
-                        {stock?.currency}
-                      </span>
-                    )}{" "}
-                    {stock?.stockAmount && stock.symbol}
+                    {purchasedStockData[0]?.amount} {stock?.currency}
                     <br />
-                    <span className="w-28 md:w-40 text-gray-500 text-left ">
-                      {stock.stockAmount && (
-                        <span>
-                          {stock?.preMarketPrice
-                            ? stock?.preMarketPrice
-                            : stock?.regularMarketPrice}{" "}
-                          {stock?.currency}
-                        </span>
-                      )}
+                    <span className="text-gray-600">
+                      No. of stock: {purchasedStockData[0]?.stockAmount}
                     </span>
                   </p>
                 </div>

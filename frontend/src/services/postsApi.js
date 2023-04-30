@@ -20,7 +20,7 @@ export const postsApi = createApi({
     getSinglePost: builder.query({
       async queryFn(id) {
         try {
-          const res = await fetch(`/api/post/${id}`);
+          const res = await fetch(`https://stonks-api.webdrip.in/api/post/${id}`);
 
           const data = res.json();
 
