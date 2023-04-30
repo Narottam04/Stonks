@@ -8,6 +8,7 @@ import {
   getStocks,
   getTrendingRecommendation
 } from "../controllers/Stocks";
+import { billyChatBot } from "../controllers/ChatBot";
 
 export const stocksRoute = express.Router();
 
@@ -18,3 +19,4 @@ stocksRoute.get("/quote/historical", getStockChart);
 stocksRoute.get("/recommendBySymbol", getRecommendationBySymbol);
 stocksRoute.get("/trending", getTrendingRecommendation);
 stocksRoute.get("/insights", getInsights);
+stocksRoute.post('/chat/billy', billyChatBot)

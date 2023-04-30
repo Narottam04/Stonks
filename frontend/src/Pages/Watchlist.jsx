@@ -18,17 +18,19 @@ import { useGetWatchlistDataQuery } from "../services/supabaseApi";
 
 import Loader from "../Components/Loader";
 
-const trailingActions = (watchlistId,symbol, userId, refetch) => {
+const trailingActions = (watchlistId, symbol, userId, refetch) => {
   async function handleDelete() {
     try {
-      const delWatchlist = await fetch(`https://stonks-api.webdrip.in/api/user/watchlist?watchlistId=${watchlistId}`,{
-        method:"DELETE"
-      })
-      console.log(delWatchlist)
+      const delWatchlist = await fetch(
+        `https://stonks-api.webdrip.in/api/user/watchlist?watchlistId=${watchlistId}`,
+        {
+          method: "DELETE"
+        }
+      );
+      console.log(delWatchlist);
       if (!delWatchlist.ok) {
         throw new Error(`Something went wrong!`);
       }
-
     } catch (error) {
       console.log(error);
     }
@@ -65,11 +67,11 @@ const Watchlist = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const openMarket = watchlistData?.filter(stock => stock?.marketState !=="CLOSED")  
-      if(openMarket?.length !== 0){
-        refetch()
-      }else{
-        console.log("All markets are closed")
+      const openMarket = watchlistData?.filter((stock) => stock?.marketState !== "CLOSED");
+      if (openMarket?.length !== 0) {
+        refetch();
+      } else {
+        console.log("All markets are closed");
       }
     }, 10000);
 
@@ -149,7 +151,12 @@ const Watchlist = () => {
             watchlistData.length !== 0 &&
             watchlistData.map((stock, index) => (
               <SwipeableListItem
-                trailingActions={trailingActions(stock?.watchlistId, stock?.symbol, currentUser.uid, refetch)}
+                trailingActions={trailingActions(
+                  stock?.watchlistId,
+                  stock?.symbol,
+                  currentUser.uid,
+                  refetch
+                )}
                 key={index}
               >
                 <div className="grid grid-cols-2 md:grid-cols-4 text-gray-500 py-2 px-1md:px-5 hover:bg-gray-900 rounded-lg cursor-pointer border-b-2 border-gray-800 xl:w-full">

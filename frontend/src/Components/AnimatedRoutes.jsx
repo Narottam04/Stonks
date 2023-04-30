@@ -25,6 +25,10 @@ import FAQ from "../Pages/FAQ";
 import GlobalStats from "../Pages/GlobalStats";
 import VirtualUsdPage from "../Pages/VirtualUsdPage";
 import Loader from "./Loader";
+import Social from "../Pages/Social";
+import SocialPost from "../Pages/SocialPost";
+import SocialPostDetails from "../Pages/socialPostDetails";
+import BillyChatBot from "../Pages/BillyChatBot";
 
 const Login = lazy(() => import("../Pages/Login"));
 const Signup = lazy(() => import("../Pages/Signup"));
@@ -82,6 +86,10 @@ const AnimatedRoutes = () => {
           <Route path="/app/more" element={<MoreMobileNavPage />} />
           <Route path="/app/faq" element={<FAQ />} />
           <Route path="/app/market/globalStats" element={<GlobalStats />} />
+          <Route path="/app/billy" element={<BillyChatBot />} />
+          <Route path="/app/social" element={<Social />} />
+          <Route path="/app/social/new" element={<SocialPost />} />
+          <Route path="/app/social/:id" element={<SocialPostDetails />} />
         </Route>
         {/* <Route
           path="/app"

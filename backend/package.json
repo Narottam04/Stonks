@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "node ./dist/app.js"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,8 @@
     "express-validator": "^6.14.3",
     "firebase-admin": "^11.5.0",
     "google-news-json": "^2.1.0",
+    "mindsdb-js-sdk": "^2.2.1",
+    "socket.io": "^4.6.1",
     "yahoo-finance2": "^2.3.10"
   }
 }

@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
 import asyncHandler from "express-async-handler";
 import yahooFinance from "yahoo-finance2";
 

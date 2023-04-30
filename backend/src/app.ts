@@ -7,6 +7,11 @@ import { errorHandler, notFound } from "./middlewares/ErrorMiddleware";
 import { userRoute } from "./routes/userRoutes";
 import asyncHandler from "express-async-handler";
 let googleNewsAPI = require("google-news-json");
+import { Server, Socket } from "socket.io";
+import { postRouter } from "./routes/postsRoutes";
+import { connectMindsDB } from "./config/mindsDB-server";
+import { createServer } from "http";
+
 
 dotenv.config();
 
@@ -15,10 +20,43 @@ if (!process.env.PORT) {
 }
 
 const PORT: Number = parseInt(process.env.PORT as string, 10);
+const SOCKETPORT: Number = parseInt(process.env.SOCKETPORT as string)
+
+
+// Connect to mindsdb
+connectMindsDB();
 
 const app = express();
 
-app.use(cors());
+
+const allowedOrigins = [
+  "capacitor://localhost",
+  "ionic://localhost",
+  "http://localhost",
+  "http://localhost:8080",
+  "http://localhost:8100",
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://stonks-app.webdrip.in"
+];
+
+// Reflect the origin if it's in the allowed list or not defined (cURL, Postman, etc.)
+const corsOptions = {
+  // @ts-expect-error
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Origin not allowed by CORS"));
+    }
+  }
+};
+
+
+// Enable preflight requests for all routes
+// app.options("*", cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,6 +69,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/user", userRoute);
 app.use("/api/stocks", stocksRoute);
+app.use("/api/post", postRouter);
 
 app.get(
   "/api/news",
@@ -46,6 +85,24 @@ app.get(
     return res.json(fetchNews);
   })
 );
+
+// socket io 
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("We are live and connected");
+  console.log(socket.id);
+});
+
+io.engine.on("connection_error", (err) => {
+  console.log(err);
+});
 
 // custom error handler
 app.use(notFound);

@@ -9,25 +9,16 @@ export const supabaseApi = createApi({
     getPortfolioData: builder.query({
       async queryFn(id) {
         try {
-          let { data: portfolio, error } = await supabase
-            .from("portfolio")
-            .select(
-              `
-                coinId,
-                coinSymbol,
-                coinName,
-                image,
-                amount,
-                coinAmount
-              `
-            )
-            .eq("userId", `${id}`)
-            .not("coinId", "eq", "USD");
+          const res = await fetch(
+            `https://stonks-api.webdrip.in/api/user/getPurchasedStock?id=${id}`
+          );
 
-          if (error) {
-            throw new Error(error);
+          const data = await res.json();
+
+          if (!res.ok) {
+            throw new Error("Something went wrong!");
           }
-          return { data: portfolio };
+          return { data };
         } catch (error) {
           return { error: error };
         }
@@ -67,7 +58,7 @@ export const supabaseApi = createApi({
           //   let portfolioPromise = [];
           //   portfolioId.forEach((coinId) => {
           //     // create a promise for each api call
-          //     const request = fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`);
+          //     const request = fetch(`https://api.coingecko.comhttps://stonks-api.webdrip.in/api/v3/coins/${coinId}`);
           //     portfolioPromise.push(request);
           //   });
           //   const res = await Promise.allSettled(portfolioPromise);

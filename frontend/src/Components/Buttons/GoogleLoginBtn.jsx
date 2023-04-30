@@ -109,7 +109,7 @@ const GoogleLoginBtn = () => {
           }
         }
       }
-      
+
       console.log("logged in user successfully");
       navigate("/app");
     } catch (error) {

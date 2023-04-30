@@ -57,7 +57,7 @@ const BuyCoins = ({ data, modal, setModal }) => {
     try {
       setOrderLoading(true);
 
-      const buyStock = await fetch(`https://stonks-api.webdrip.in/api/user/buyStock`, {
+      const buyStock = await fetch("https://stonks-api.webdrip.in/api/user/buyStock", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -197,8 +197,7 @@ const BuyCoins = ({ data, modal, setModal }) => {
           <div className="px-6 py-3 md:p-6">
             <p className="text-base leading-relaxed font-semibold text-gray-200">
               1 <span className="uppercase">{data.symbol}</span> ={" "}
-              {data?.regularMarketPrice && data?.regularMarketPrice}{" "}
-              {data?.currency}
+              {data?.regularMarketPrice && data?.regularMarketPrice} {data?.currency}
             </p>
 
             <p className="text-base leading-relaxed font-semibold text-gray-200">
