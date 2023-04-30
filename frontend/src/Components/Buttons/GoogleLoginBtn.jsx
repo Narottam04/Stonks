@@ -1,10 +1,16 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { getAdditionalUserInfo } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  getAdditionalUserInfo,
+  getAuth,
+  signInWithCredential
+} from "firebase/auth";
+import { Capacitor } from "@capacitor/core";
 
 import google from "../../Assets/svg/google.svg";
 import { useAuth } from "../../Context/AuthContext";
-import { supabase } from "../../Utils/init-supabase";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 
 import ErrorToast from "../ErrorToast";
 
@@ -17,37 +23,93 @@ const GoogleLoginBtn = () => {
 
   async function googleSignInHandler() {
     try {
-      const response = await signInWithGoogle();
-      const { isNewUser } = getAdditionalUserInfo(response);
-      if (isNewUser) {
-        // add user data with networth on database
-        const { data, error } = await supabase.from("users").upsert([
-          {
-            userId: response.user.uid,
-            username: response.user.displayName,
-            email: response.user.email
-          }
-        ]);
+      if (!Capacitor.isNativePlatform()) {
+        const response = await signInWithGoogle();
+        const { isNewUser } = getAdditionalUserInfo(response);
+        console.log("isNewUser", isNewUser);
+        if (isNewUser) {
+          console.log("adding those dataaa");
+          // add user data with networth on database
+          const addUser = await fetch(`https://stonks-api.webdrip.in/api/user`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              id: response.user.uid,
+              name: response.user.displayName,
+              email: response.user.email
+            })
+          });
 
-        // if(error){
-        //     console.log(error)
-        //     await deleteUser(response.user)
-        //     alert("Something Went Wrong! Please Try Again.")
-        // }
+          const addUserRes = await addUser.json();
 
-        // give 100k coins to user
-        console.log(data);
-        const { error: addToPortfolioError } = await supabase.from("portfolio").upsert([
-          {
-            userId: response.user.uid,
-            coinId: "USD",
-            coinName: "Virtual USD",
-            image: "https://img.icons8.com/fluency/96/000000/us-dollar-circled.png",
-            amount: 100000
+          if (!addUser.ok) {
+            throw new Error(addUser);
           }
-        ]);
+
+          // give 100k coins to user
+          const addVirtualUsd = await fetch(`https://stonks-api.webdrip.in/api/user/addCoin`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              userId: response.user.uid
+            })
+          });
+          const addUsdRes = await addVirtualUsd.json();
+
+          if (!addVirtualUsd.ok) {
+            throw new Error(addVirtualUsd);
+          }
+        }
+      } else {
+        // 1. Create credentials on the native layer
+        const result = await FirebaseAuthentication.signInWithGoogle();
+        // 2. Sign in on the web layer using the id token
+        const credential = GoogleAuthProvider.credential(result.credential?.idToken);
+        const auth = getAuth();
+        await signInWithCredential(auth, credential);
+
+        if (result?.additionalUserInfo.isNewUser) {
+          // add user data with networth on database
+          const addUser = await fetch(`https://stonks-api.webdrip.in/api/user`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              id: result?.user?.uid,
+              name: result?.user?.displayName,
+              email: result?.user?.email
+            })
+          });
+
+          const addUserRes = await addUser.json();
+
+          if (!addUser.ok) {
+            throw new Error(addUser);
+          }
+
+          // give 100k coins to user
+          const addVirtualUsd = await fetch(`https://stonks-api.webdrip.in/api/user/addCoin`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              userId: result.user?.uid
+            })
+          });
+          const addUsdRes = await addVirtualUsd.json();
+
+          if (!addVirtualUsd.ok) {
+            throw new Error(addVirtualUsd);
+          }
+        }
       }
-
+      
       console.log("logged in user successfully");
       navigate("/app");
     } catch (error) {

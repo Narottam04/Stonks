@@ -6,12 +6,12 @@ import * as Yup from "yup";
 import { getAdditionalUserInfo } from "firebase/auth";
 
 import { useAuth } from "../Context/AuthContext";
-import { supabase } from "../Utils/init-supabase";
 
 import FloatingInput from "../Components/Buttons/FloatingInput";
 import FloatingPasswordInput from "../Components/Buttons/FloatingPasswordInput";
 import ErrorToast from "../Components/ErrorToast";
 import FormAppInfo from "../Components/FormAppInfo";
+import GoogleLoginBtn from "../Components/Buttons/GoogleLoginBtn";
 // import GoogleLoginBtn from "../Components/Buttons/GoogleLoginBtn";
 
 const initialValues = {
@@ -77,7 +77,7 @@ function Signup() {
           })
         });
 
-        const addUserRes = await addUser.json()
+        const addUserRes = await addUser.json();
 
         if (!addUser.ok) {
           throw new Error(addUser);
@@ -109,20 +109,19 @@ function Signup() {
             userId: response.user.uid
           })
         });
-        const addUsdRes = await addVirtualUsd.json()
-
+        const addUsdRes = await addVirtualUsd.json();
 
         if (!addVirtualUsd.ok) {
           throw new Error(addVirtualUsd);
         }
         userNetworth = addUserRes;
         availableCoins = addUsdRes;
-        console.log(userNetworth,availableCoins)
+        console.log(userNetworth, availableCoins);
       }
 
       if (response.user && userNetworth && availableCoins) {
         console.log("created user successfully");
-        navigate("/app",{
+        navigate("/app", {
           state: {
             userNetworth,
             availableCoins
@@ -216,17 +215,18 @@ function Signup() {
           </Link>
           {/* Social Provider signup */}
           {/* Turned off due to native android platform error for google sign in */}
-          {/* <div className="relative my-4">
-                        <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-black text-gray-100"> Or continue with </span>
-                        </div>
-                    </div>
-                    <div className="mt-8  space-y-4">
-                        <GoogleLoginBtn/>
-                    </div> */}
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-black text-gray-100"> Or continue with </span>
+            </div>
+          </div>
+          <div className="mt-8  space-y-4">
+            <GoogleLoginBtn />
+          </div>
+          {/*  */}
         </div>
         <FormAppInfo />
       </section>

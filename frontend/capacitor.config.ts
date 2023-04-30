@@ -13,7 +13,11 @@ const config: CapacitorConfig = {
       launchAutoHide: true,
       launchShowDuration: 3000,
       showSpinner: false
-    }
+    },
+    FirebaseAuthentication: {
+      skipNativeAuth: false,
+      providers: ["google.com"],
+    },
   },
   server: {
     androidScheme: "http",

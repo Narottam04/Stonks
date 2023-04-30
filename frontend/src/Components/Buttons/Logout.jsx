@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { Capacitor } from "@capacitor/core";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 
 import { useAuth } from "../../Context/AuthContext";
 import ErrorToast from "../ErrorToast";
@@ -13,9 +15,16 @@ const Logout = () => {
 
   async function logoutHandler() {
     try {
-      await logout();
-      console.log("logged out user successfully");
-      navigate("/");
+      if (!Capacitor.isNativePlatform()) {
+        await logout();
+        console.log("logged out user successfully");
+        navigate("/");
+      }else{
+        await FirebaseAuthentication.signOut();
+        await logout();
+        console.log("logged out user successfully");
+        navigate("/");
+      }
     } catch (error) {
       setErrorMessage(error.message);
       toastRef.current.show();

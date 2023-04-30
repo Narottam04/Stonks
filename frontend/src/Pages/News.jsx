@@ -23,28 +23,6 @@ const News = () => {
     }
   }, []);
 
-  
-  useEffect(() => {
-    const fetchData = async() => {
-      try {
-        console.log("response...................")
-        const res = await fetch(`https://stonks-api.webdrip.in/api/news?news=finance`);
-        console.log("response...................",res, typeof res)
-        if (!res.ok) {
-          throw new Error(`Something went wrong!`);
-        }
-
-        const data = await res.json();
-        console.log(data)
-        return { data: data };
-      } catch (error) {
-        return { error: error };
-      }
-    }
-
-    fetchData()
-}, []);
-
   return (
     <>
       {fetchNewsError && <p className="text-red-400 text-xl">Something went Wrong</p>}
