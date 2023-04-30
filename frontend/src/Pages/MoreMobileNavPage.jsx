@@ -55,21 +55,21 @@ const MoreMobileNavPage = () => {
           <AiOutlineRight className="inline-block text-gray-200 w-5 h-5 mb-1" />
         </Link>
 
-        {/* <Link to="/app/market/globalStats" className="px-4  flex justify-between items-center">
+        <Link to="/app/social" className="px-4  flex justify-between items-center">
           <div className="flex justify-center space-x-2 items-center cursor-pointer">
             <BsBank className="inline-block text-gray-200 w-5 h-5 " />
-            <h2 className="text-xl font-semibold text-gray-200">Global Metrics</h2>
+            <h2 className="text-xl font-semibold text-gray-200">Stonks Social</h2>
           </div>
           <AiOutlineRight className="inline-block text-gray-200 w-5 h-5 mb-1" />
-        </Link> */}
+        </Link>
 
-        {/* <Link to="/app/learn" className="px-4  flex justify-between items-center">
+        <Link to="/app/billy" className="px-4  flex justify-between items-center">
           <div className="flex justify-center space-x-2 items-center cursor-pointer">
             <HiAcademicCap className="inline-block text-gray-200 w-6 h-6 " />
-            <h2 className="text-xl font-semibold text-gray-200">Learn & Earn</h2>
+            <h2 className="text-xl font-semibold text-gray-200">Chat with Billy</h2>
           </div>
           <AiOutlineRight className="inline-block text-gray-200 w-5 h-5 mb-1" />
-        </Link> */}
+        </Link>
       </div>
 
       <p className="text-white font-bold text-lg  font-title mt-4 ml-3 px-2 md:px-4">
