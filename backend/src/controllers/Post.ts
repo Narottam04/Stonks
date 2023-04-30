@@ -89,6 +89,20 @@ export const getSinglePost = expressAsyncHandler(async (req: Request, res: Respo
 export const addComment = expressAsyncHandler(async (req: Request, res: Response) => {
   const { body, postId, userId }: { body: string; postId: string; userId: string } = req.body;
 
+  // check if the comment is spammy
+  const fetchIsCommentSpam = await MindsDB.SQL.runQuery(
+    `SELECT comment, sentiment FROM spam_detection_gpt3 WHERE comment = '${body}';`
+  );
+
+  if (
+    fetchIsCommentSpam?.rows[0]?.sentiment?.includes("Spam") ||
+    fetchIsCommentSpam?.rows[0]?.sentiment?.includes("spam")
+  ) {
+    throw new Error(
+      "Oops! please check your comment. Our system has detected it is a spam message"
+    );
+  }
+
   // check toxicity of comment
   const fetchCommnentToxicity = await MindsDB.SQL.runQuery(
     `SELECT * FROM abuse_detection1 WHERE comment='${body}';`

@@ -9,7 +9,9 @@ export const supabaseApi = createApi({
     getPortfolioData: builder.query({
       async queryFn(id) {
         try {
-          const res = await fetch(`/api/user/getPurchasedStock?id=${id}`);
+          const res = await fetch(
+            `https://stonks-api.webdrip.in/api/user/getPurchasedStock?id=${id}`
+          );
 
           const data = await res.json();
 

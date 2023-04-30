@@ -39,7 +39,7 @@ const SocialPostDetails = () => {
         throw new Error("Please write a comment!");
       }
 
-      const res = await fetch("https://stonks-api.webdrip.in/api/post/comment", {
+      const res = await fetch("/api/post/comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
