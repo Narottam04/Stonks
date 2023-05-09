@@ -6,6 +6,7 @@ The Stonks app is the perfect way to learn about Stocks trading without any risk
 ## Link to the GitHub Repository
 
 Web App - https://stonks-app.webdrip.in/
+
 Android App - https://drive.google.com/file/d/1xKaU2pzFvt9LDsh5msl9Eup05f7jQlTL/view?usp=sharing
 
 ## Demo Video
