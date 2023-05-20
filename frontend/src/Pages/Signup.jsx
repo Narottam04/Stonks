@@ -6,7 +6,6 @@ import * as Yup from "yup";
 import { getAdditionalUserInfo } from "firebase/auth";
 
 import { useAuth } from "../Context/AuthContext";
-import { supabase } from "../Utils/init-supabase";
 
 import FloatingInput from "../Components/Buttons/FloatingInput";
 import FloatingPasswordInput from "../Components/Buttons/FloatingPasswordInput";

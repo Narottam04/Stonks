@@ -12,6 +12,7 @@ import {
 
 import { auth } from "../Utils/init-firebase";
 import Loader from "../Components/Loader";
+import { Capacitor } from "@capacitor/core";
 
 // create a context with a placeholder value initially
 const AuthContext = createContext();
