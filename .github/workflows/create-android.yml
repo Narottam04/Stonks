@@ -45,7 +45,7 @@ jobs:
         run: npx cap copy
 
       - name: Build app bundle
-        run: cd android && ./gradlew bundle
+        run: cd android && ./gradlew bundle && ./gradlew assembleDebug
 
       - name: Extract Android signing key from env
         run: |
@@ -58,12 +58,12 @@ jobs:
       - name: Check folder content of android output
         run: ls ./android/app/build/outputs/bundle/release
 
-      - name: Upload release bundle
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release
-          path: ./android/app/build/outputs/bundle/release/app-release-signed.aab
-          retention-days: 60
+      # - name: Upload release bundle
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: app-release
+      #     path: ./android/app/build/outputs/bundle/release/app-release-signed.aab
+      #     retention-days: 60
 
       - name: Set Tag
         id: current-datetime
@@ -74,6 +74,7 @@ jobs:
         run: |
           hub release create ${{ steps.current-datetime.outputs.CURRENT_DATETIME }} \
           -m ${{ steps.current-datetime.outputs.CURRENT_DATETIME }} \
-          -a ./android/app/build/outputs/bundle/release/app-release-signed.aab
+          -a ./android/app/build/outputs/bundle/release/app-release-signed.aab \
+          -a ./android/app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
