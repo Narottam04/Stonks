@@ -55,6 +55,9 @@ jobs:
       - name: Sign dev build
         run: jarsigner -keystore android/release.decrypted.jks -storepass "${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" -signedjar ./android/app/build/outputs/bundle/release/app-release-signed.aab ./android/app/build/outputs/bundle/release/app-release.aab release
 
+      - name: Check folder content of android output
+        run: ls ./android/app/build/outputs/bundle/release
+
       - name: Upload release bundle
         uses: actions/upload-artifact@v3
         with:
