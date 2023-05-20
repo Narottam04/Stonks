@@ -33,7 +33,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && echo /* /index.html  200 | cat >build/_redirects ",
+    "build": "vite build",
     "preview": "vite preview",
     "ionic:build": "npm run build",
     "ionic:serve": "npm run dev"
