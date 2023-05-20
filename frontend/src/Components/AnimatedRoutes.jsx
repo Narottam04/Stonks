@@ -27,7 +27,7 @@ import VirtualUsdPage from "../Pages/VirtualUsdPage";
 import Loader from "./Loader";
 import Social from "../Pages/Social";
 import SocialPost from "../Pages/SocialPost";
-import SocialPostDetails from "../Pages/socialPostDetails";
+import SocialPostDetails from "../Pages/SocialPostDetails";
 import BillyChatBot from "../Pages/BillyChatBot";
 
 const Login = lazy(() => import("../Pages/Login"));
