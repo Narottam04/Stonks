@@ -235,7 +235,7 @@ const Portfolio = () => {
 
                 <div className="flex items-center justify-start ml-auto md:ml-0 ">
                   <p className="w-28 md:w-40 text-white font-semibold text-left break-words">
-                    {purchasedStockData[0]?.amount} {stock?.currency}
+                    {purchasedStockData[0]?.amount} USD
                     <br />
                     <span className="text-gray-600">
                       No. of stock: {purchasedStockData[0]?.stockAmount}

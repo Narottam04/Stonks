@@ -30,6 +30,6 @@
     "google-news-json": "^2.1.0",
     "mindsdb-js-sdk": "^2.2.1",
     "socket.io": "^4.6.1",
-    "yahoo-finance2": "^2.3.10"
+    "yahoo-finance2": "^2.4.1"
   }
 }

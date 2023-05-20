@@ -45,7 +45,7 @@ const SellCoins = ({ data, modal, setModal }) => {
     // get amount of coin that you have purchased
     async function coinAmount() {
       const res = await fetch(
-        `https://stonks-api.webdrip.in/api/user/getPurchasedStock?stockId=${data?.symbol}`
+        `https://stonks-api.webdrip.in/api/user/getPurchasedStock?id=${currentUser?.uid}`
       );
 
       if (!res.ok) {
@@ -55,7 +55,9 @@ const SellCoins = ({ data, modal, setModal }) => {
       const availableStock = await res.json();
 
       if (availableStock !== null) {
-        setAvailabeCoinAmt(availableStock.stockAmount);
+        const numOfStock = availableStock?.filter((stock) => stock?.stockId === data?.symbol);
+        console.log("stock abount", availableStock);
+        setAvailabeCoinAmt(numOfStock[0]?.stockAmount);
       }
     }
     coinAmount();
@@ -203,7 +205,7 @@ const SellCoins = ({ data, modal, setModal }) => {
             </p>
 
             <p className="text-base leading-relaxed font-semibold text-gray-200">
-              Available Coin amount = {availabeCoinAmt}
+              Available stock amount = {availabeCoinAmt}
             </p>
 
             <div className="relative py-4">
