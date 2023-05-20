@@ -76,4 +76,4 @@ jobs:
           -m ${{ steps.current-datetime.outputs.CURRENT_DATETIME }} \
           -a ./android/app/build/outputs/bundle/release/app-release-signed.aab
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
