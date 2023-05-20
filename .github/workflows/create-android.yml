@@ -25,7 +25,7 @@ jobs:
           node-version: 19.x
 
       - name: Navigate to frontend folder
-        run: cd frontend
+        run: ls && cd frontend && ls
 
       - name: Install app dependencies
         run: npm install
