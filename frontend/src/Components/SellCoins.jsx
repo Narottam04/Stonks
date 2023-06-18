@@ -44,7 +44,9 @@ const SellCoins = ({ data, modal, setModal }) => {
     dispatch(fetchAvailableCoins(currentUser.uid));
     // get amount of coin that you have purchased
     async function coinAmount() {
-      const res = await fetch(`/api/user/getPurchasedStock?stockId=${data?.symbol}`);
+      const res = await fetch(
+        `https://stonks-api.webdrip.in/api/user/getPurchasedStock?id=${currentUser?.uid}`
+      );
 
       if (!res.ok) {
         console.log("Could not get available stock");
@@ -53,7 +55,9 @@ const SellCoins = ({ data, modal, setModal }) => {
       const availableStock = await res.json();
 
       if (availableStock !== null) {
-        setAvailabeCoinAmt(availableStock.stockAmount);
+        const numOfStock = availableStock?.filter((stock) => stock?.stockId === data?.symbol);
+        console.log("stock abount", availableStock);
+        setAvailabeCoinAmt(numOfStock[0]?.stockAmount);
       }
     }
     coinAmount();
@@ -80,7 +84,7 @@ const SellCoins = ({ data, modal, setModal }) => {
         throw new Error("Not enough coins!");
       }
 
-      const sellStock = await fetch("/api/user/sellStock", {
+      const sellStock = await fetch("https://stonks-api.webdrip.in/api/user/sellStock", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -192,8 +196,7 @@ const SellCoins = ({ data, modal, setModal }) => {
           <div className="px-6 py-3 md:p-6">
             <p className="text-base leading-relaxed font-semibold text-gray-200">
               1 <span className="uppercase">{data.symbol}</span> ={" "}
-              {data?.regularMarketPrice && data?.regularMarketPrice}{" "}
-              {data?.currency}
+              {data?.regularMarketPrice && data?.regularMarketPrice} {data?.currency}
             </p>
 
             <p className="text-base leading-relaxed font-semibold text-gray-200">
@@ -202,7 +205,7 @@ const SellCoins = ({ data, modal, setModal }) => {
             </p>
 
             <p className="text-base leading-relaxed font-semibold text-gray-200">
-              Available Coin amount = {availabeCoinAmt}
+              Available stock amount = {availabeCoinAmt}
             </p>
 
             <div className="relative py-4">

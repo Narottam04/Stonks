@@ -12,7 +12,7 @@ import {
   useGetWatchlistDataQuery,
   useUpdateUserNetworthQuery
 } from "../services/supabaseApi";
- 
+
 import Loader from "./Loader";
 
 const DesktopDashboard = () => {
@@ -71,7 +71,8 @@ const DesktopDashboard = () => {
   } = useGetLeaderboardQuery();
 
   const location = useLocation();
-  console.log(location?.state)
+  // console.log(location?.state);
+  console.log(watchlistData);
 
   useEffect(() => {
     refetchAvailableCoins();
@@ -86,7 +87,8 @@ const DesktopDashboard = () => {
         // fetchNewsLoading ||
         fetchAvailableUsdCoinsLoading ||
         leaderboardIsLoading ||
-        userNetworthLoading || fetchNewsLoading) && <Loader />}
+        userNetworthLoading ||
+        fetchNewsLoading) && <Loader />}
       {/* credit card */}
       <div className="w-80 m-auto md:m-0 md:w-96 h-56 lg:ml-8 bg-gradient-to-tr from-gray-900 to-gray-700  rounded-xl relative text-white shadow-2xl transition-transform transform hover:scale-110">
         <div className="w-full px-8 absolute top-8 font-text">
@@ -189,7 +191,7 @@ const DesktopDashboard = () => {
               </div>
             ) : (
               fetchWatchlistSuccess &&
-              watchlistData.slice(0, 7).map((stock, index) => (
+              watchlistData?.slice(0, 7).map((stock, index) => (
                 <li
                   key={index}
                   className="flex items-center font-text text-gray-200 justify-between py-3 border-b-2 border-gray-800 "

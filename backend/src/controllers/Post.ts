@@ -25,13 +25,12 @@ export const addPost = expressAsyncHandler(async (req: Request, res: Response) =
 
   const [fetchTitleToxicity, fetchDescriptionToxicity] = await Promise.all(fetchToxicityResult);
 
-  console.log(fetchTitleToxicity)
+  console.log(fetchTitleToxicity);
 
   const titleToxicity = fetchTitleToxicity?.rows[0]?.sentiment_explain;
   const descriptionToxicity = fetchDescriptionToxicity?.rows[0]?.sentiment_explain;
 
   const isToxic = isToxicFunc(titleToxicity) || isToxicFunc(descriptionToxicity);
-
 
   if (isToxic) {
     throw new Error(
@@ -57,11 +56,29 @@ export const addPost = expressAsyncHandler(async (req: Request, res: Response) =
 export const getAllPost = expressAsyncHandler(async (req: Request, res: Response) => {
   const post = await db.post.findMany({
     include: {
-      VotePost:true,
+      VotePost: true,
       user: true
     }
   });
 
+  res.json(post);
+});
+
+// @desc  GET Single POST
+// @route GET /api/post/:id
+// @access PRIVATE
+export const getSinglePost = expressAsyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const post = await db.post.findFirst({
+    include: {
+      VotePost: true,
+      user: true
+    },
+    where: {
+      id
+    }
+  });
 
   res.json(post);
 });
@@ -71,6 +88,20 @@ export const getAllPost = expressAsyncHandler(async (req: Request, res: Response
 // @access PRIVATE
 export const addComment = expressAsyncHandler(async (req: Request, res: Response) => {
   const { body, postId, userId }: { body: string; postId: string; userId: string } = req.body;
+
+  // check if the comment is spammy
+  const fetchIsCommentSpam = await MindsDB.SQL.runQuery(
+    `SELECT comment, sentiment FROM spam_detection_gpt3 WHERE comment = '${body}';`
+  );
+
+  if (
+    fetchIsCommentSpam?.rows[0]?.sentiment?.includes("Spam") ||
+    fetchIsCommentSpam?.rows[0]?.sentiment?.includes("spam")
+  ) {
+    throw new Error(
+      "Oops! please check your comment. Our system has detected it is a spam message"
+    );
+  }
 
   // check toxicity of comment
   const fetchCommnentToxicity = await MindsDB.SQL.runQuery(

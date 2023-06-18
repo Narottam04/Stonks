@@ -27,7 +27,7 @@ const SocialPost = () => {
       setSubmitPost(true);
       const { title, body } = values;
 
-      const res = await fetch("/api/post", {
+      const res = await fetch("https://stonks-api.webdrip.in/api/post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

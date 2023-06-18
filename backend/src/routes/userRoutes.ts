@@ -10,6 +10,7 @@ import {
   getAllWatchlist,
   getAvailableStock,
   getLeaderboard,
+  getPurchasedStock,
   getUserNetworth,
   getUserVirtualUsd,
   sellStock,
@@ -48,7 +49,7 @@ userRoute.post(
   buyStock
 );
 
-userRoute.get("/getPurchasedStock", getAvailableStock);
+userRoute.get("/getPurchasedStock", getPurchasedStock);
 
 userRoute.post(
   "/sellStock",

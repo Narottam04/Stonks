@@ -87,7 +87,7 @@ const CurrencyDetailsPage = () => {
     setAddToGun(true);
     // check if stock already on watchlist
     const checkWatchlist = await fetch(
-      `/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
+      `https://stonks-api.webdrip.in/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
     );
 
     if (!checkWatchlist.ok) {
@@ -98,7 +98,7 @@ const CurrencyDetailsPage = () => {
 
     if (watchlist === null) {
       // add the stock to watchlist
-      await fetch("/api/user/watchlist", {
+      await fetch("https://stonks-api.webdrip.in/api/user/watchlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

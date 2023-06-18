@@ -3,7 +3,7 @@ import { BiDownvote, BiUpvote } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
 import ErrorToast from "../Components/ErrorToast";
 import { useAuth } from "../Context/AuthContext";
-import { useGetAllCommentsQuery } from "../services/postsApi";
+import { useGetAllCommentsQuery, useGetSinglePostQuery } from "../services/postsApi";
 import { Faq } from "../Components/FAQ";
 
 const SocialPostDetails = () => {
@@ -19,6 +19,16 @@ const SocialPostDetails = () => {
   const [submitComment, setSubmitComment] = useState(false);
   const [PostComment, setPostComment] = useState(null);
 
+  const {
+    data: postData,
+    error: fetchPostError,
+    isLoading: fetchPostLoading,
+    refetch: refetchPostData
+  } = useGetSinglePostQuery(postDetails?.id);
+
+  console.log("single post data", postData);
+
+  // getComemnts
   const { data, error, isLoading, isSuccess, refetch } = useGetAllCommentsQuery(postDetails?.id);
 
   async function handleSubmit(comment) {
@@ -61,6 +71,142 @@ const SocialPostDetails = () => {
     }
   }
 
+  async function handlePostUpvote(postId) {
+    try {
+      if (typeof postId !== "string") {
+        throw new Error("Something went wrong! please try again");
+      }
+      const res = await fetch("https://stonks-api.webdrip.in/api/post/reaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          postId,
+          userId: currentUser?.uid,
+          type: "UPVOTE"
+        })
+      });
+
+      const upvoteRes = await res.json();
+      console.log("submit post", upvoteRes);
+
+      if (upvoteRes.hasOwnProperty("message")) {
+        throw new Error(upvoteRes?.message);
+      }
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      refetchPostData();
+    } catch (error) {
+      setErrorMessage(error.message);
+      toastRef.current.show();
+    }
+  }
+
+  async function handlePostDownvote(postId) {
+    try {
+      if (typeof postId !== "string") {
+        throw new Error("Something went wrong! please try again");
+      }
+      const res = await fetch("https://stonks-api.webdrip.in/api/post/reaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          postId,
+          userId: currentUser?.uid,
+          type: "DOWNVOTE"
+        })
+      });
+
+      const downvoteRes = await res.json();
+      console.log("submit post", downvoteRes);
+
+      if (downvoteRes.hasOwnProperty("message")) {
+        throw new Error(downvoteRes?.message);
+      }
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      refetchPostData();
+    } catch (error) {
+      setErrorMessage(error.message);
+      toastRef.current.show();
+    }
+  }
+
+  async function handleCommentUpvote(commentId) {
+    try {
+      if (typeof commentId !== "string") {
+        throw new Error("Something went wrong! please try again");
+      }
+      const res = await fetch("https://stonks-api.webdrip.in/api/post/comment/reaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          commentId,
+          userId: currentUser?.uid,
+          type: "UPVOTE"
+        })
+      });
+
+      const upvoteRes = await res.json();
+      console.log("submit post", upvoteRes);
+
+      if (upvoteRes.hasOwnProperty("message")) {
+        throw new Error(upvoteRes?.message);
+      }
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      refetch();
+    } catch (error) {
+      setErrorMessage(error.message);
+      toastRef.current.show();
+    }
+  }
+
+  async function handleCommentDownvote(commentId) {
+    try {
+      if (typeof commentId !== "string") {
+        throw new Error("Something went wrong! please try again");
+      }
+      const res = await fetch("https://stonks-api.webdrip.in/api/post/comment/reaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          commentId,
+          userId: currentUser?.uid,
+          type: "DOWNVOTE"
+        })
+      });
+
+      const downvoteRes = await res.json();
+      console.log("submit post", downvoteRes);
+
+      if (downvoteRes.hasOwnProperty("message")) {
+        throw new Error(downvoteRes?.message);
+      }
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      refetch();
+    } catch (error) {
+      setErrorMessage(error.message);
+      toastRef.current.show();
+    }
+  }
+
   return (
     <main className="flex items-start gap-8 lg:px-4 py-2 lg:py-8  mx-auto  max-w-[1600px]">
       <ErrorToast message={errorMessage} ref={toastRef} />
@@ -69,9 +215,17 @@ const SocialPostDetails = () => {
         <div className="flex gap-x-4 items-start">
           {/* upvote & downvote section */}
           <div className="flex flex-col justify-center items-center">
-            <BiUpvote className="text-gray-300 w-6 h-6 " />
-            <p className="text-gray-400 my-1">12</p>
-            <BiDownvote className="text-gray-300 w-6 h-6 " />
+            <BiUpvote
+              onClick={() => handlePostUpvote(postData?.id)}
+              className="text-gray-300 w-6 h-6 cursor-pointer"
+            />
+            <p className="text-gray-400 my-1">
+              {postData?.VotePost?.reduce((acc, currentVal) => acc + currentVal?.voting, 0)}
+            </p>
+            <BiDownvote
+              onClick={() => handlePostDownvote(postData?.id)}
+              className="text-gray-300 w-6 h-6  cursor-pointer"
+            />
           </div>
           {/* post title and description */}
           <div>
@@ -157,17 +311,25 @@ const SocialPostDetails = () => {
               <div key={comment?.id} className="flex items-start gap-x-4 my-4">
                 {/* upvote & downvote section */}
                 <div className="flex flex-col justify-center items-center">
-                  <BiUpvote className="text-gray-300 w-4 h-4 cursor-pointer" />
-                  <p className="text-gray-400 my-1">12</p>
-                  <BiDownvote className="text-gray-300 w-4 h-4 cursor-pointer" />
+                  <BiUpvote
+                    onClick={() => handleCommentUpvote(comment?.id)}
+                    className="text-gray-300 w-4 h-4 cursor-pointer"
+                  />
+                  <p className="text-gray-400 my-1">
+                    {comment?.VoteComment?.reduce((acc, currentVal) => acc + currentVal?.voting, 0)}
+                  </p>
+                  <BiDownvote
+                    onClick={() => handleCommentDownvote(comment?.id)}
+                    className="text-gray-300 w-4 h-4 cursor-pointer"
+                  />
                 </div>
                 {/* comment */}
                 <div>
                   {/* user */}
                   <div className="flex align-center">
                     <img
-                      src={`https://avatars.dicebear.com/api/initials/${comment?.user?.name}.svg`}
-                      alt=""
+                      src={`https://api.dicebear.com/6.x/fun-emoji/svg?seed=${comment?.user?.name}&mouth=cute,kissHeart,lilSmile,smileLol,smileTeeth,tongueOut,wideSmile&backgroundColor=b6e3f4,c0aede,d1d4f9`}
+                      alt="profile pic of user"
                       className="w-6 h-6 rounded-full dark:bg-gray-500"
                     />
                     <p className="text-white pl-1 font-bold">{comment?.user?.name}</p>

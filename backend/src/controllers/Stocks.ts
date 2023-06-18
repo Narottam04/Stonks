@@ -42,7 +42,7 @@ export const getStockQuoteSummary = asyncHandler(async (req: Request, res: Respo
     throw new Error("Please send a valid request");
   }
 
-  const result = await yahooFinance.quote(stock);
+  const result = await yahooFinance.quoteSummary(stock);
 
   res.json(result);
 });

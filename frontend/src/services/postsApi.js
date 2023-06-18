@@ -7,7 +7,20 @@ export const postsApi = createApi({
     getAllPosts: builder.query({
       async queryFn(id) {
         try {
-          const res = await fetch("/api/post");
+          const res = await fetch("https://stonks-api.webdrip.in/api/post");
+
+          const data = res.json();
+
+          return { data };
+        } catch (error) {
+          return { error };
+        }
+      }
+    }),
+    getSinglePost: builder.query({
+      async queryFn(id) {
+        try {
+          const res = await fetch(`https://stonks-api.webdrip.in/api/post/${id}`);
 
           const data = res.json();
 
@@ -20,7 +33,7 @@ export const postsApi = createApi({
     getAllComments: builder.query({
       async queryFn(id) {
         try {
-          const res = await fetch(`/api/post/comment/${id}`);
+          const res = await fetch(`https://stonks-api.webdrip.in/api/post/comment/${id}`);
 
           const data = res.json();
 
@@ -33,4 +46,4 @@ export const postsApi = createApi({
   })
 });
 
-export const { useGetAllPostsQuery, useGetAllCommentsQuery } = postsApi;
+export const { useGetAllPostsQuery, useGetAllCommentsQuery, useGetSinglePostQuery } = postsApi;
