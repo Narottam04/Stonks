@@ -7,11 +7,10 @@ import { errorHandler, notFound } from "./middlewares/ErrorMiddleware";
 import { userRoute } from "./routes/userRoutes";
 import asyncHandler from "express-async-handler";
 let googleNewsAPI = require("google-news-json");
-import { Server, Socket } from "socket.io";
+// import { Server, Socket } from "socket.io";
 import { postRouter } from "./routes/postsRoutes";
 import { connectMindsDB } from "./config/mindsDB-server";
-import { createServer } from "http";
-
+// import { createServer } from "http";
 
 dotenv.config();
 
@@ -20,14 +19,12 @@ if (!process.env.PORT) {
 }
 
 const PORT: Number = parseInt(process.env.PORT as string, 10);
-const SOCKETPORT: Number = parseInt(process.env.SOCKETPORT as string)
-
+const SOCKETPORT: Number = parseInt(process.env.SOCKETPORT as string);
 
 // Connect to mindsdb
 connectMindsDB();
 
 const app = express();
-
 
 const allowedOrigins = [
   "capacitor://localhost",
@@ -52,11 +49,10 @@ const corsOptions = {
   }
 };
 
-
 // Enable preflight requests for all routes
 // app.options("*", cors(corsOptions));
 // app.use(cors(corsOptions));
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -86,28 +82,30 @@ app.get(
   })
 );
 
-// socket io 
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
+// socket io
+// const httpServer = createServer(app);
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"]
+//   }
+// });
 
-io.on("connection", (socket) => {
-  console.log("We are live and connected");
-  console.log(socket.id);
-});
+// io.on("connection", (socket) => {
+//   console.log("We are live and connected");
+//   console.log(socket.id);
+// });
 
-io.engine.on("connection_error", (err) => {
-  console.log(err);
-});
+// io.engine.on("connection_error", (err) => {
+//   console.log(err);
+// });
 
 // custom error handler
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Application listening at http://localhost:${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Application listening at http://localhost:${PORT}`);
+// });
+
+export default app;
