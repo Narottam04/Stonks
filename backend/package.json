@@ -7,8 +7,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "build": "tsc",
     "start": "node ./dist/app.js",
-    "vercel-build": "echo Build",
-    "postinstall": "npx prisma generate"
+   "vercel-build": "echo Build && npx prisma generate"
   },
   "keywords": [],
   "author": "",
