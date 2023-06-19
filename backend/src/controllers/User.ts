@@ -140,7 +140,7 @@ export const getAllWatchlist = asyncHandler(async (req: Request, res: Response) 
     }
   });
 
-  const watchlistString = allWatchlist.map((stock) => stock.stockId);
+  const watchlistString = allWatchlist.map((stock: any) => stock.stockId);
 
   let temp: Array<object> = [];
   for (let index = 0; index < watchlistString.length; index++) {
@@ -291,7 +291,7 @@ export const getPurchasedStock = asyncHandler(async (req: Request, res: Response
     }
   });
 
-  const removeVirtualUsd = purchasedStock.filter((stock) => stock?.stockId !== "VirtualUSD");
+  const removeVirtualUsd = purchasedStock.filter((stock: any) => stock?.stockId !== "VirtualUSD");
 
   res.json(removeVirtualUsd);
 });
@@ -380,8 +380,8 @@ export const getAllPortfolio = asyncHandler(async (req: Request, res: Response) 
   });
 
   const portfolioString = allPortfolio
-    .map((stock) => stock.stockId)
-    .filter((stock) => stock !== "VirtualUSD");
+    .map((stock: any) => stock.stockId)
+    .filter((stock: string) => stock !== "VirtualUSD");
 
   let temp: Array<object> = [];
   for (let index = 0; index < portfolioString.length; index++) {
@@ -410,7 +410,7 @@ export const updateUserNetworth = asyncHandler(async (req: Request, res: Respons
   });
 
   const networth = allPortfolio.reduce(
-    (accumulator, currentValue) => accumulator + currentValue?.amount,
+    (accumulator: number, currentValue: any) => accumulator + currentValue?.amount,
     0
   );
 
