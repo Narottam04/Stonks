@@ -45,7 +45,7 @@ const CurrencyDetailsPage = () => {
   const [toggleSellCoinsModal, setToggleSellCoinsModal] = useState(false);
 
   const { data, error, isLoading, isSuccess, refetch } = useGetStockDataQuery(id);
-
+    console.log(data)
   const { data: currencyConversions, isLoading: currencyConversionLoading } =
     useGetCurrencyConversionsQuery();
 
@@ -87,7 +87,7 @@ const CurrencyDetailsPage = () => {
     setAddToGun(true);
     // check if stock already on watchlist
     const checkWatchlist = await fetch(
-      `https://stonks-api.webdrip.in/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
+      `https://api-6tyd64odzq-uc.a.run.app/api/user/watchlist?id=${currentUser.uid}&symbol=${data?.symbol}`
     );
 
     if (!checkWatchlist.ok) {
@@ -98,7 +98,7 @@ const CurrencyDetailsPage = () => {
 
     if (watchlist === null) {
       // add the stock to watchlist
-      await fetch("https://stonks-api.webdrip.in/api/user/watchlist", {
+      await fetch("https://api-6tyd64odzq-uc.a.run.app/api/user/watchlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -227,8 +227,8 @@ const CurrencyDetailsPage = () => {
                       ? data?.preMarketChangePercent >= 0 && "+"
                       : data?.regularMarketChange >= 0 && "+"}
                     {data?.preMarketChangePercent
-                      ? data?.preMarketChangePercent.toFixed(3)
-                      : data?.regularMarketChange.toFixed(3)}
+                      ? data?.preMarketChangePercent?.toFixed(3)
+                      : data?.regularMarketChange?.toFixed(3)}
                     %
                   </p>
                 </div>

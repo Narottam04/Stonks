@@ -21,7 +21,7 @@ const Social = () => {
       if (typeof postId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("https://stonks-api.webdrip.in/api/post/reaction", {
+      const res = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/post/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -55,7 +55,7 @@ const Social = () => {
       if (typeof postId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("https://stonks-api.webdrip.in/api/post/reaction", {
+      const res = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/post/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

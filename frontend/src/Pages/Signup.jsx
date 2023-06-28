@@ -66,7 +66,7 @@ function Signup() {
         //   }
         // ]);
 
-        const addUser = await fetch("https://stonks-api.webdrip.in/api/user", {
+        const addUser = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -101,7 +101,7 @@ function Signup() {
         //     coinSymbol: "vusd"
         //   }
         // ]);
-        const addVirtualUsd = await fetch("https://stonks-api.webdrip.in/api/user/addCoin", {
+        const addVirtualUsd = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/user/addCoin", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

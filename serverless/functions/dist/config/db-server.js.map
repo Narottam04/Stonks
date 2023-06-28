@@ -1,0 +1,1 @@
+{"version":3,"file":"db-server.js","sourceRoot":"","sources":["../../src/config/db-server.ts"],"names":[],"mappings":";;;AAAA,2CAA8C;AAE9C,IAAI,EAAgB,CAAC;AAcZ,gBAAE;AARX,IAAI,CAAC,MAAM,CAAC,IAAI,EAAE;IAChB,MAAM,CAAC,IAAI,GAAG,IAAI,qBAAY,CAAC;QAC7B,WAAW,EAAE,SAAS;KACvB,CAAC,CAAC;CACJ;AAED,aAAA,EAAE,GAAG,MAAM,CAAC,IAAI,CAAC"}

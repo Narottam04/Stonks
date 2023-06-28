@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id          String        @id @unique
+  name        String
+  email       String        @unique
+  networth    Float         @default(100000)
+  Watchlist   Watchlist[]
+  Portfolio   Portfolio[]
+  LiveChat    LiveChat[]
+  Post        Post[]
+  Comment     Comment[]
+  VotePost    VotePost[]
+  VoteComment VoteComment[]
+}
+
+model Watchlist {
+  id      String @id @default(uuid())
+  stockId String
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+
+  @@index([userId])
+}
+
+model Portfolio {
+  id          String @id @default(uuid())
+  stockId     String
+  user        User   @relation(fields: [userId], references: [id])
+  userId      String
+  amount      Float
+  stockName   String
+  stockAmount Int?
+
+  @@index([userId])
+}
+
+model LiveChat {
+  id        String   @id @default(uuid())
+  stockId   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  chat      String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Post {
+  id        String     @id @default(uuid())
+  title     String
+  body      String     @db.Text
+  imageUrl  String?
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime   @default(now())
+  Comment   Comment[]
+  VotePost  VotePost[]
+
+  @@index([userId])
+}
+
+model Comment {
+  id          String        @id @default(uuid())
+  body        String        @db.Text
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  post        Post          @relation(fields: [postId], references: [id])
+  postId      String
+  createdAt   DateTime      @default(now())
+  VoteComment VoteComment[]
+
+  @@index([userId, postId])
+}
+
+model VotePost {
+  id        String   @id @default(uuid())
+  voting    Int      @default(1)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  createdAt DateTime @default(now())
+
+  @@index([userId, postId])
+}
+
+model VoteComment {
+  id        String   @id @default(uuid())
+  voting    Int      @default(1)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId String
+  createdAt DateTime @default(now())
+
+  @@index([userId, commentId])
+}

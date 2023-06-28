@@ -45,7 +45,7 @@ const SellCoins = ({ data, modal, setModal }) => {
     // get amount of coin that you have purchased
     async function coinAmount() {
       const res = await fetch(
-        `https://stonks-api.webdrip.in/api/user/getPurchasedStock?id=${currentUser?.uid}`
+        `https://api-6tyd64odzq-uc.a.run.app/api/user/getPurchasedStock?id=${currentUser?.uid}`
       );
 
       if (!res.ok) {
@@ -84,7 +84,7 @@ const SellCoins = ({ data, modal, setModal }) => {
         throw new Error("Not enough coins!");
       }
 
-      const sellStock = await fetch("https://stonks-api.webdrip.in/api/user/sellStock", {
+      const sellStock = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/user/sellStock", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

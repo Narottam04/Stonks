@@ -22,7 +22,7 @@ const trailingActions = (watchlistId, symbol, userId, refetch) => {
   async function handleDelete() {
     try {
       const delWatchlist = await fetch(
-        `https://stonks-api.webdrip.in/api/user/watchlist?watchlistId=${watchlistId}`,
+        `https://api-6tyd64odzq-uc.a.run.app/api/user/watchlist?watchlistId=${watchlistId}`,
         {
           method: "DELETE"
         }
