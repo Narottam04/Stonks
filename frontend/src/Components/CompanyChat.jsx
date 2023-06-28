@@ -14,7 +14,7 @@ const CompanyChat = ({ companyName }) => {
   async function handleSubmit(context, question) {
     try {
       setLoading(true);
-      const res = await fetch(`https://stonks-api.webdrip.in/api/stocks/chat/billy`, {
+      const res = await fetch(`https://api-6tyd64odzq-uc.a.run.app/api/stocks/chat/billy`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

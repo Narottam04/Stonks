@@ -23,7 +23,7 @@ const GoogleLoginBtn = () => {
       if (isNewUser) {
         console.log("adding those dataaa");
         // add user data with networth on database
-        const addUser = await fetch(`https://stonks-api.webdrip.in/api/user`, {
+        const addUser = await fetch(`https://api-6tyd64odzq-uc.a.run.app/api/user`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -42,7 +42,7 @@ const GoogleLoginBtn = () => {
         }
 
         // give 100k coins to user
-        const addVirtualUsd = await fetch(`https://stonks-api.webdrip.in/api/user/addCoin`, {
+        const addVirtualUsd = await fetch(`https://api-6tyd64odzq-uc.a.run.app/api/user/addCoin`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

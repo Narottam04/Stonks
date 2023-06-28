@@ -16,7 +16,8 @@ export default defineConfig({
       //   target: 'http://localhost:8000',
       //   ws: true
       // }
-      "/api": "https://stonks-api.webdrip.in"
+      // "/api": "https://stonks-api.webdrip.in"
+      "/api": "https://api-6tyd64odzq-uc.a.run.app"
     }
   }
 });

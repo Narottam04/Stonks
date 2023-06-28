@@ -76,7 +76,7 @@ const SocialPostDetails = () => {
       if (typeof postId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("https://stonks-api.webdrip.in/api/post/reaction", {
+      const res = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/post/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -110,7 +110,7 @@ const SocialPostDetails = () => {
       if (typeof postId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("https://stonks-api.webdrip.in/api/post/reaction", {
+      const res = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/post/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -144,7 +144,7 @@ const SocialPostDetails = () => {
       if (typeof commentId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("https://stonks-api.webdrip.in/api/post/comment/reaction", {
+      const res = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/post/comment/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -178,7 +178,7 @@ const SocialPostDetails = () => {
       if (typeof commentId !== "string") {
         throw new Error("Something went wrong! please try again");
       }
-      const res = await fetch("https://stonks-api.webdrip.in/api/post/comment/reaction", {
+      const res = await fetch("https://api-6tyd64odzq-uc.a.run.app/api/post/comment/reaction", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

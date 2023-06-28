@@ -104,8 +104,6 @@ app.get(
 app.use(notFound);
 app.use(errorHandler);
 
-// app.listen(PORT, () => {
-//   console.log(`Application listening at http://localhost:${PORT}`);
-// });
-
-export default app;
+app.listen(PORT, () => {
+  console.log(`Application listening at http://localhost:${PORT}`);
+});

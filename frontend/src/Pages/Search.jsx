@@ -18,7 +18,7 @@ const Search = () => {
         try {
           setIsLoading(true);
           const res = await fetch(
-            `https://stonks-api.webdrip.in/api/stocks/search?search=${search}`
+            `https://api-6tyd64odzq-uc.a.run.app/api/stocks/search?search=${search}`
           );
 
           const data = await res.json();
